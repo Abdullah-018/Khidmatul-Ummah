@@ -1,4 +1,4 @@
-let data = loadKUData();
+﻿let data = loadKUData();
 
 const TEXT_LABELS = [
   { group: "ওয়েবসাইট: পরিচয়", key: "organizationName", label: "সংগঠনের নাম" },
@@ -19,20 +19,19 @@ const TEXT_LABELS = [
   { group: "ওয়েবসাইট: About/Donate", key: "aboutTitle", label: "পরিচিতি শিরোনাম" },
   { group: "ওয়েবসাইট: About/Donate", key: "donateTitle", label: "দান শিরোনাম" },
   { group: "ওয়েবসাইট: About/Donate", key: "donateText", label: "দান প্যারাগ্রাফ", long: true },
-  { group: "ওয়েবসাইট: লাইব্রেরী/শূরা", key: "libraryTitle", label: "লাইব্রেরী শিরোনাম" },
-  { group: "ওয়েবসাইট: লাইব্রেরী/শূরা", key: "libraryIntro", label: "লাইব্রেরী প্যারাগ্রাফ", long: true },
-  { group: "ওয়েবসাইট: লাইব্রেরী/শূরা", key: "shuraTitle", label: "শূরা শিরোনাম" },
-  { group: "ওয়েবসাইট: লাইব্রেরী/শূরা", key: "shuraIntro", label: "শূরা প্যারাগ্রাফ", long: true },
+  { group: "ওয়েবসাইট: লাইব্রেরি/শূরা", key: "libraryTitle", label: "লাইব্রেরি শিরোনাম" },
+  { group: "ওয়েবসাইট: লাইব্রেরি/শূরা", key: "libraryIntro", label: "লাইব্রেরি প্যারাগ্রাফ", long: true },
+  { group: "ওয়েবসাইট: লাইব্রেরি/শূরা", key: "shuraTitle", label: "শূরা শিরোনাম" },
+  { group: "ওয়েবসাইট: লাইব্রেরি/শূরা", key: "shuraIntro", label: "শূরা প্যারাগ্রাফ", long: true },
   { group: "ওয়েবসাইট: রিপোর্ট/স্বেচ্ছাসেবক", key: "reportEyebrow", label: "রিপোর্ট ছোট টেক্সট" },
   { group: "ওয়েবসাইট: রিপোর্ট/স্বেচ্ছাসেবক", key: "reportTitle", label: "রিপোর্ট শিরোনাম" },
   { group: "ওয়েবসাইট: রিপোর্ট/স্বেচ্ছাসেবক", key: "volunteerEyebrow", label: "স্বেচ্ছাসেবক ছোট টেক্সট" },
   { group: "ওয়েবসাইট: রিপোর্ট/স্বেচ্ছাসেবক", key: "volunteerTitle", label: "স্বেচ্ছাসেবক শিরোনাম" },
   { group: "ওয়েবসাইট: রিপোর্ট/স্বেচ্ছাসেবক", key: "volunteerIntro", label: "স্বেচ্ছাসেবক প্যারাগ্রাফ", long: true },
-  { group: "ওয়েবসাইট: Footer/Nav", key: "footerText", label: "Footer টেক্সট", long: true },
-  { group: "ওয়েবসাইট: Footer/Nav", key: "navAdmin", label: "Admin link text" },
-  { group: "ওয়েবসাইট: Footer/Nav", key: "navDonate", label: "Donate CTA text" },
+  { group: "ওয়েবসাইট: ফুটার/নেভিগেশন", key: "footerText", label: "ফুটার টেক্সট", long: true },
+  { group: "ওয়েবসাইট: ফুটার/নেভিগেশন", key: "navAdmin", label: "এডমিন লিংক টেক্সট" },
+  { group: "ওয়েবসাইট: ফুটার/নেভিগেশন", key: "navDonate", label: "দান বাটনের টেক্সট" },
   { group: "এডমিন: লগইন", key: "adminLoginTitle", label: "লগইন শিরোনাম" },
-  { group: "এডমিন: লগইন", key: "adminDemoLogin", label: "ডেমো লগইন টেক্সট" },
   { group: "এডমিন: লগইন", key: "adminUsername", label: "ইউজারনেম লেবেল" },
   { group: "এডমিন: লগইন", key: "adminPassword", label: "পাসওয়ার্ড লেবেল" },
   { group: "এডমিন: লগইন", key: "adminLoginButton", label: "লগইন বাটন" },
@@ -42,7 +41,7 @@ const TEXT_LABELS = [
   { group: "এডমিন: মেনু", key: "adminNavDonations", label: "দান ও রসিদ মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavDonors", label: "ডোনার মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavAccounts", label: "একাউন্ট মেনু" },
-  { group: "এডমিন: মেনু", key: "adminNavLibrary", label: "লাইব্রেরী মেনু" },
+  { group: "এডমিন: মেনু", key: "adminNavLibrary", label: "লাইব্রেরি মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavShura", label: "শূরা মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavTexts", label: "টেক্সট ইডিটর মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavBackup", label: "ব্যাকআপ মেনু" },
@@ -60,7 +59,7 @@ const TEXT_LABELS = [
   { group: "এডমিন: সেকশন", key: "adminDonorsTitle", label: "ডোনার শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminDonorsIntro", label: "ডোনার প্যারাগ্রাফ", long: true },
   { group: "এডমিন: সেকশন", key: "adminAccountsTitle", label: "দানের একাউন্ট শিরোনাম" },
-  { group: "এডমিন: সেকশন", key: "adminLibraryTitle", label: "লাইব্রেরী শিরোনাম" },
+  { group: "এডমিন: সেকশন", key: "adminLibraryTitle", label: "লাইব্রেরি শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminShuraTitle", label: "শূরা শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminTextsTitle", label: "টেক্সট ইডিটর শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminTextsIntro", label: "টেক্সট ইডিটর প্যারাগ্রাফ", long: true },
@@ -91,7 +90,7 @@ function bindLogin() {
     e.preventDefault();
     const user = document.getElementById("login-user").value.trim();
     const pass = document.getElementById("login-pass").value.trim();
-    if (user === "admin" && pass === "admin123") {
+    if (user === "KU-Admin" && pass === "KU@24445") {
       sessionStorage.setItem("ku_admin_logged_in", "true");
       showAdminApp();
     } else {
@@ -155,7 +154,7 @@ function renderDashboard() {
     ["মোট দান", formatBDT(verifiedDonations.reduce((s,d)=>s+Number(d.amount||0),0))],
     ["Pending Donation", formatNumberBN(pending.length)],
     ["মোট ডোনার", formatNumberBN((data.donors || []).length)],
-    ["লাইব্রেরীর বই", formatNumberBN((data.books || []).length)],
+    ["লাইব্রেরির বই", formatNumberBN((data.books || []).length)],
     ["সক্রিয় শূরা সদস্য", formatNumberBN((data.shura || []).filter(m=>m.active).length)]
   ];
   document.getElementById("dashboard-summary").innerHTML = cards.map(([label, value]) => `<article class="summary-card"><span>${label}</span><strong>${value}</strong></article>`).join("");
@@ -213,13 +212,13 @@ function renderDonationTable() {
     <td><select onchange="updateDonationStatus('${d.id}', this.value)"><option value="Pending" ${selected(d.status,"Pending")}>অপেক্ষমাণ</option><option value="Verified" ${selected(d.status,"Verified")}>ভেরিফাইড</option><option value="Approved" ${selected(d.status,"Approved")}>অনুমোদিত</option><option value="Cancelled" ${selected(d.status,"Cancelled")}>বাতিল</option></select></td>
     <td><div class="action-row"><button class="btn small soft" onclick="printDonation('${d.id}')">রসিদ</button><button class="btn small danger" onclick="deleteDonation('${d.id}')">ডিলিট</button></div></td>
   </tr>`).join("");
-  document.getElementById("donation-table").innerHTML = rows || `<tr><td colspan="8">এখনো কোনো donation entry নেই।</td></tr>`;
+  document.getElementById("donation-table").innerHTML = rows || `<tr><td colspan="8">এখনো কোনো দানের তথ্য নেই।</td></tr>`;
 }
 window.updateDonationStatus = function(id, status) { const d = data.donations.find(item => item.id === id); if (d) { d.status = status; saveAndRender(); } };
-window.deleteDonation = function(id) { if (confirm("এই donation entry ডিলিট করতে চান?")) { data.donations = data.donations.filter(d => d.id !== id); saveAndRender(); } };
+window.deleteDonation = function(id) { if (confirm("এই দানের তথ্য ডিলিট করতে চান?")) { data.donations = data.donations.filter(d => d.id !== id); saveAndRender(); } };
 window.printDonation = function(id) {
   const d = data.donations.find(item => item.id === id); if (!d) return;
-  const html = `<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>রসিদ ${escapeHTML(d.id)}</title><style>body{font-family:Arial,sans-serif;padding:30px;color:#07110a}.receipt{max-width:620px;margin:auto;border:1px solid #d7ecd0;border-radius:18px;padding:24px}.head{display:flex;align-items:center;gap:12px;border-bottom:1px solid #d7ecd0;padding-bottom:12px;margin-bottom:14px}.head img{width:72px}h1{margin:0;color:#093b17}.line{display:flex;justify-content:space-between;border-bottom:1px solid #e8fbdc;padding:9px 0}.print{margin-top:18px}</style></head><body><div class="receipt"><div class="head"><img src="assets/khidmatul-ummah-official-logo-transparent.png"><div><h1>খিদমাতুল উম্মাহ</h1><strong>দানের রসিদ</strong></div></div><div class="line"><b>রসিদ নম্বর</b><span>${escapeHTML(d.id)}</span></div><div class="line"><b>তারিখ</b><span>${formatDateBN(d.date)}</span></div><div class="line"><b>দাতার নাম</b><span>${escapeHTML(d.donorName)}</span></div><div class="line"><b>মোবাইল</b><span>${escapeHTML(d.mobile)}</span></div><div class="line"><b>ফান্ড</b><span>${escapeHTML(d.fund)}</span></div><div class="line"><b>পেমেন্ট</b><span>${escapeHTML(d.paymentMethod || "-")}</span></div><div class="line"><b>পরিমাণ</b><span>${formatBDT(d.amount)}</span></div><div class="line"><b>স্ট্যাটাস</b><span>${translateStatus(d.status)}</span></div><p>আপনার দানের জন্য জাযাকাল্লাহু খাইরান।</p><button class="print" onclick="window.print()">প্রিন্ট করুন</button></div></body></html>`;
+  const html = `<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>রসিদ ${escapeHTML(d.id)}</title><style>body{font-family:Arial,sans-serif;padding:30px;color:#07110a}.receipt{max-width:620px;margin:auto;border:1px solid #d7ecd0;border-radius:18px;padding:24px}.head{display:flex;align-items:center;gap:12px;border-bottom:1px solid #d7ecd0;padding-bottom:12px;margin-bottom:14px}.head img{width:72px}h1{margin:0;color:#093b17}.line{display:flex;justify-content:space-between;border-bottom:1px solid #e8fbdc;padding:9px 0}.print{margin-top:18px}</style></head><body><div class="receipt"><div class="head"><img src="assets/khidmatul-ummah-official-logo-transparent.png"><div><h1>খিদমাতুল উম্মাহ</h1><strong>দানের রসিদ</strong></div></div><div class="line"><b>রসিদ নম্বর</b><span>${escapeHTML(d.id)}</span></div><div class="line"><b>তারিখ</b><span>${formatDateBN(d.date)}</span></div><div class="line"><b>দাতার নাম</b><span>${escapeHTML(d.donorName)}</span></div><div class="line"><b>মোবাইল</b><span>${escapeHTML(d.mobile)}</span></div><div class="line"><b>ফান্ড</b><span>${escapeHTML(d.fund)}</span></div><div class="line"><b>দান পদ্ধতি</b><span>${escapeHTML(d.paymentMethod || "-")}</span></div><div class="line"><b>পরিমাণ</b><span>${formatBDT(d.amount)}</span></div><div class="line"><b>স্ট্যাটাস</b><span>${translateStatus(d.status)}</span></div><p>আপনার দানের জন্য জাযাকাল্লাহু খাইরান।</p><button class="print" onclick="window.print()">প্রিন্ট করুন</button></div></body></html>`;
   const win = window.open("", "_blank");
   win.document.write(html);
   win.document.close();
@@ -263,29 +262,32 @@ function renderDonorTable() {
     <td>${translateStatus(d.status)}</td>
     <td><div class="action-row"><button class="btn small soft" onclick="editDonor('${d.id}')">এডিট</button><button class="btn small danger" onclick="deleteDonor('${d.id}')">ডিলিট</button></div></td>
   </tr>`).join("");
-  document.getElementById("donor-table").innerHTML = rows || `<tr><td colspan="8">এখনো কোনো donor entry নেই।</td></tr>`;
+  document.getElementById("donor-table").innerHTML = rows || `<tr><td colspan="8">এখনো কোনো ডোনার তথ্য নেই।</td></tr>`;
 }
 window.editDonor = function(id) {
   const d = data.donors.find(item => item.id === id); if (!d) return;
   setVal("admin-donor-id", d.id); setVal("admin-donor-name", d.name); setVal("admin-donor-mobile", d.mobile); setVal("admin-donor-email", d.email); setVal("admin-donor-address", d.address); setVal("admin-donor-status", d.status || "Active"); setVal("admin-donor-note", d.note); openTab("donors");
 };
-window.deleteDonor = function(id) { if (confirm("এই donor information ডিলিট করতে চান?")) { data.donors = data.donors.filter(d => d.id !== id); saveAndRender(); } };
+window.deleteDonor = function(id) { if (confirm("এই ডোনার তথ্য ডিলিট করতে চান?")) { data.donors = data.donors.filter(d => d.id !== id); saveAndRender(); } };
 
 function bindAccountForm() {
-  document.getElementById("account-form").addEventListener("submit", e => {
+  document.getElementById("account-form").addEventListener("submit", async e => {
     e.preventDefault();
-    const account = { id: getVal("account-id") || makeId(), type: getVal("account-type"), holder: getVal("account-holder"), number: getVal("account-number"), active: getVal("account-active") === "true", instruction: getVal("account-instruction") };
+    const id = getVal("account-id") || makeId();
+    const existing = data.accounts.find(a => a.id === id) || {};
+    const fileData = await fileToDataURL(document.getElementById("account-qr-file").files[0]);
+    const account = { id, type: getVal("account-type"), holder: getVal("account-holder"), number: getVal("account-number"), gatewayUrl: getVal("account-gateway-url"), qrImage: fileData || getVal("account-qr-url") || existing.qrImage || "", active: getVal("account-active") === "true", instruction: getVal("account-instruction") };
     upsert(data.accounts, account);
     clearAccountForm();
     saveAndRender();
   });
   document.getElementById("account-clear").addEventListener("click", clearAccountForm);
 }
-function clearAccountForm() { document.getElementById("account-form").reset(); setVal("account-id", ""); setVal("account-active", "true"); }
+function clearAccountForm() { document.getElementById("account-form").reset(); setVal("account-id", ""); setVal("account-gateway-url", ""); setVal("account-qr-url", ""); setVal("account-active", "true"); }
 function renderAccountsTable() {
-  document.getElementById("account-table").innerHTML = data.accounts.map(a => `<tr><td><b>${escapeHTML(a.type)}</b></td><td>${escapeHTML(a.holder)}</td><td>${escapeHTML(a.number)}</td><td>${a.active ? "সক্রিয়" : "নিষ্ক্রিয়"}</td><td><div class="action-row"><button class="btn small soft" onclick="editAccount('${a.id}')">এডিট</button><button class="btn small danger" onclick="deleteAccount('${a.id}')">ডিলিট</button></div></td></tr>`).join("");
+  document.getElementById("account-table").innerHTML = data.accounts.map(a => `<tr><td><b>${escapeHTML(a.type)}</b></td><td>${escapeHTML(a.holder)}</td><td>${escapeHTML(a.number)}</td><td>${a.qrImage ? "যোগ করা" : "নেই"}</td><td>${a.gatewayUrl ? "যোগ করা" : "নেই"}</td><td>${a.active ? "সক্রিয়" : "নিষ্ক্রিয়"}</td><td><div class="action-row"><button class="btn small soft" onclick="editAccount('${a.id}')">এডিট</button><button class="btn small danger" onclick="deleteAccount('${a.id}')">ডিলিট</button></div></td></tr>`).join("");
 }
-window.editAccount = function(id) { const a = data.accounts.find(item => item.id === id); if (!a) return; setVal("account-id", a.id); setVal("account-type", a.type); setVal("account-holder", a.holder); setVal("account-number", a.number); setVal("account-active", String(a.active)); setVal("account-instruction", a.instruction); openTab("accounts"); };
+window.editAccount = function(id) { const a = data.accounts.find(item => item.id === id); if (!a) return; setVal("account-id", a.id); setVal("account-type", a.type); setVal("account-holder", a.holder); setVal("account-number", a.number); setVal("account-gateway-url", a.gatewayUrl || ""); setVal("account-qr-url", a.qrImage && !a.qrImage.startsWith("data:") ? a.qrImage : ""); setVal("account-active", String(a.active)); setVal("account-instruction", a.instruction); openTab("accounts"); };
 window.deleteAccount = function(id) { if (confirm("এই একাউন্ট ডিলিট করতে চান?")) { data.accounts = data.accounts.filter(a => a.id !== id); saveAndRender(); } };
 
 function bindBookForm() {
@@ -385,3 +387,4 @@ function selected(a, b) { return a === b ? "selected" : ""; }
 function openTab(tab) { openTabDirect(tab); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
 document.addEventListener("DOMContentLoaded", initAdmin);
+

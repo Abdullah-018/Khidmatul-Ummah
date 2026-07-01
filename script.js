@@ -124,16 +124,27 @@ function renderDonationAccounts() {
   const instructions = document.getElementById("payment-instructions");
   const active = kuData.accounts.filter(a => a.active);
   if (!fieldset) return;
-  fieldset.innerHTML = `<legend>দান পাঠানোর পদ্ধতি</legend>` + active.map((a, i) => `
+  fieldset.innerHTML = `<legend>দান পাঠানোর পদ্ধতি</legend>` + active.map((a, i) => {
+    const brand = paymentBrand(a);
+    return `
     <label class="payment-option">
       <input type="radio" name="payment-method" value="${escapeHTML(a.id)}" ${i === 0 ? "checked" : ""}>
+      <span class="payment-logo ${brand.className}" aria-hidden="true">${escapeHTML(brand.label)}</span>
       <span>${escapeHTML(a.type)}</span>
     </label>
-  `).join("");
+  `;
+  }).join("");
   fieldset.querySelectorAll('input[name="payment-method"]').forEach(radio => {
     radio.addEventListener("change", updatePaymentInstructions);
   });
   updatePaymentInstructions();
+}
+
+function paymentBrand(account) {
+  const type = String(account?.type || "").toLowerCase();
+  if (type.includes("বিকাশ") || type.includes("bkash")) return { className: "bkash", label: "bKash" };
+  if (type.includes("নগদ") || type.includes("nagad")) return { className: "nagad", label: "নগদ" };
+  return { className: "bank", label: "ব্যাংক" };
 }
 
 function updatePaymentInstructions() {
@@ -142,13 +153,30 @@ function updatePaymentInstructions() {
   if (!instructions) return;
   const account = kuData.accounts.find(a => a.id === selected?.value) || kuData.accounts.find(a => a.active);
   if (!account) {
-    instructions.innerHTML = `<strong>দান পাঠানোর account এখনো add করা হয়নি।</strong><span>Admin panel থেকে account যোগ করুন।</span>`;
+    instructions.innerHTML = `<strong>দান পাঠানোর একাউন্ট এখনো যোগ করা হয়নি।</strong><span>এডমিন প্যানেল থেকে একাউন্ট যোগ করুন।</span>`;
     return;
   }
+  const gatewayUrl = String(account.gatewayUrl || "").trim();
+  const qrImage = String(account.qrImage || "").trim();
+  const qrCard = qrImage ? `
+    <div class="payment-qr-card">
+      <img src="${escapeHTML(qrImage)}" alt="${escapeHTML(account.type)} QR কোড">
+      <div>
+        <b>QR কোড স্ক্যান করুন</b>
+        <small>মোবাইল থেকে স্ক্যান করে পেমেন্ট সম্পন্ন করুন।</small>
+      </div>
+    </div>
+  ` : "";
+  const gatewayButton = gatewayUrl ? `
+    <a class="btn small gateway-btn" href="${escapeHTML(gatewayUrl)}" target="_blank" rel="noopener">পেমেন্ট করুন</a>
+    <small>গেটওয়ে থেকে পেমেন্ট সম্পন্ন হলে লেনদেন নম্বর সংরক্ষণ করুন।</small>
+  ` : `<small>পেমেন্ট গেটওয়ে লিংক যোগ করা না থাকলে ম্যানুয়ালি দান পাঠিয়ে লেনদেন নম্বর সংরক্ষণ করুন।</small>`;
   instructions.innerHTML = `
     <strong>${escapeHTML(account.type)}-এ দান পাঠানোর নির্দেশনা</strong>
-    <span>${escapeHTML(account.instruction || "দান পাঠিয়ে Transaction ID সংরক্ষণ করুন।")}</span>
+    <span>${escapeHTML(account.instruction || "দান পাঠিয়ে লেনদেন নম্বর সংরক্ষণ করুন।")}</span>
     <ul><li><b>${escapeHTML(account.type)}:</b> ${escapeHTML(account.number)} — ${escapeHTML(account.holder)}</li></ul>
+    ${qrCard}
+    <div class="gateway-actions">${gatewayButton}</div>
   `;
 }
 

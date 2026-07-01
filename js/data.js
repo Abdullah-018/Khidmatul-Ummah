@@ -1,4 +1,4 @@
-const KU_STORAGE_KEY = "khidmatulUmmahCMS_v3_bangla_admin";
+﻿const KU_STORAGE_KEY = "khidmatulUmmahCMS_v3_bangla_admin";
 
 const KU_DEFAULT_DATA = {
   texts: {
@@ -33,7 +33,7 @@ const KU_DEFAULT_DATA = {
     volunteerTitle: "সেবামূলক কাজে যুক্ত হোন",
     volunteerIntro: "স্বেচ্ছাসেবক নিবন্ধন, প্রশিক্ষণ, অভিভাবক সম্পৃক্ততা, গ্রাম উন্নয়ন এবং প্রকল্পভিত্তিক দল ব্যবস্থাপনা পরবর্তী ধাপে বিস্তারিত করা হবে।",
     adminLoginTitle: "এডমিন লগইন",
-    adminDemoLogin: "ডেমো লগইন: admin / admin123",
+    adminDemoLogin: "",
     adminUsername: "ইউজারনেম",
     adminPassword: "পাসওয়ার্ড",
     adminLoginButton: "লগইন করুন",
@@ -43,30 +43,30 @@ const KU_DEFAULT_DATA = {
     adminNavDonations: "দান ও রসিদ",
     adminNavDonors: "ডোনার তথ্য",
     adminNavAccounts: "দানের একাউন্ট",
-    adminNavLibrary: "লাইব্রেরী",
+    adminNavLibrary: "লাইব্রেরি",
     adminNavShura: "শূরা সদস্য",
     adminNavTexts: "টেক্সট ইডিটর",
     adminNavBackup: "ব্যাকআপ / ইমপোর্ট",
     adminTopEyebrow: "এডমিন ড্যাশবোর্ড",
     adminTopTitle: "খিদমাতুল উম্মাহ কন্ট্রোল প্যানেল",
-    adminTopIntro: "এই ডেমো ভার্সন browser localStorage ব্যবহার করে। Real website-এর জন্য backend/database লাগবে।",
+    adminTopIntro: "এই ডেমো ভার্সনে তথ্য ব্রাউজারের লোকাল স্টোরেজে সংরক্ষিত হয়। লাইভ ওয়েবসাইটের জন্য নিরাপদ সার্ভার, ডাটাবেজ ও লগইন ব্যবস্থা লাগবে।",
     adminViewWebsite: "ওয়েবসাইট দেখুন",
     adminLogout: "লগআউট",
     adminQuickNotesTitle: "দ্রুত নোট",
-    adminQuickNotesText: "হোমপেজের মোট ব্যয় সম্পন্ন প্রকল্পের expense থেকে auto update হয়। Upcoming project published করলে homepage-এ campaign banner হিসেবে highlighted থাকবে।",
+    adminQuickNotesText: "হোমপেজের মোট ব্যয় সম্পন্ন প্রকল্পের ব্যয় থেকে স্বয়ংক্রিয়ভাবে আপডেট হয়। পরবর্তী প্রকল্প প্রকাশ করলে হোমপেজে হাইলাইটেড ব্যানার হিসেবে দেখা যাবে।",
     adminProjectsTitle: "প্রকল্প পাবলিশ সিস্টেম",
     adminProjectsIntro: "কমপ্লিট প্রকল্প এবং পরবর্তী প্রকল্প আলাদা type হিসেবে publish করুন।",
     adminDonationsTitle: "দান ও রসিদ ব্যবস্থাপনা",
-    adminDonationsIntro: "ওয়েবসাইটের donation form submit করলে donor-এর তথ্য এখানে save হবে এবং ডোনার টেবিলেও auto যোগ হবে।",
+    adminDonationsIntro: "ওয়েবসাইটের দান ফর্ম জমা দিলে দাতার তথ্য এখানে সংরক্ষিত হবে এবং ডোনার টেবিলেও স্বয়ংক্রিয়ভাবে যোগ হবে।",
     adminDonorsTitle: "ডোনার তথ্য এন্ট্রি ও তালিকা",
-    adminDonorsIntro: "এখানে manually donor add করা যাবে। ওয়েবসাইট থেকে donation submit করা donor-রাও auto এখানে যুক্ত হবে।",
+    adminDonorsIntro: "এখানে হাতে ডোনার যোগ করা যাবে। ওয়েবসাইট থেকে দান জমা দেওয়া ডোনাররাও স্বয়ংক্রিয়ভাবে এখানে যুক্ত হবে।",
     adminAccountsTitle: "দানের একাউন্ট সেটিংস",
-    adminLibraryTitle: "লাইব্রেরী / বই ব্যবস্থাপনা",
+    adminLibraryTitle: "লাইব্রেরি / বই ব্যবস্থাপনা",
     adminShuraTitle: "শূরা সদস্য যোগ / ব্যবস্থাপনা",
     adminTextsTitle: "টেক্সট ইডিটর",
     adminTextsIntro: "এখান থেকে হোমপেজ এবং এডমিন প্যানেলের গুরুত্বপূর্ণ লেখা পরিবর্তন করা যাবে।",
     adminBackupTitle: "ব্যাকআপ / ইমপোর্ট",
-    adminBackupIntro: "JSON export করে developer backend database-এ migrate করতে পারবে।"
+    adminBackupIntro: "JSON ব্যাকআপ ডাউনলোড করে পরবর্তীতে সার্ভার ডাটাবেজে স্থানান্তর করা যাবে।"
   },
   projects: [
     {
@@ -126,7 +126,7 @@ const KU_DEFAULT_DATA = {
     },
     {
       id: makeId(), type: "upcoming", title: "স্ট্রিট লাইট প্রকল্প", short: "গ্রামের রাস্তায় নিরাপদ ও আলোকিত পরিবেশ তৈরি করার উদ্যোগ।",
-      details: "পরবর্তী প্রকল্প হিসেবে গুরুত্বপূর্ণ রাস্তা ও অন্ধকার স্থানে স্ট্রিট লাইট স্থাপনের পরিকল্পনা নেওয়া হয়েছে। এটি বিজ্ঞাপনের মতো homepage-এ highlighted থাকবে।",
+      details: "পরবর্তী প্রকল্প হিসেবে গুরুত্বপূর্ণ রাস্তা ও অন্ধকার স্থানে স্ট্রিট লাইট স্থাপনের পরিকল্পনা নেওয়া হয়েছে। এটি বিজ্ঞাপনের মতো হোমপেজে হাইলাইটেড থাকবে।",
       date: "2026-07-15", location: "চালা গ্রাম", expense: 0, target: 120000, status: "published", featuredImage: "", videoUrl: "", jimmadar: "সমাজ উন্নয়ন জিম্মাদার"
     },
     {
@@ -137,9 +137,9 @@ const KU_DEFAULT_DATA = {
   ],
   accounts: [
     { id: makeId(), type: "বিকাশ", number: "+৮৮০ ১৭৩৯৬০০৪৬৩", holder: "মাকছুদুল হাসান", instruction: "নিচের বিকাশ নম্বরে দান পাঠিয়ে রসিদ নম্বর সংরক্ষণ করুন।", active: true },
-    { id: makeId(), type: "বিকাশ", number: "+৮৮০ ১৮৬৪৫৮৯৮৭৮", holder: "মুহাম্মাদ বেলাল", instruction: "পার্সোনাল বিকাশে দান পাঠানোর পর Transaction ID সংরক্ষণ করুন।", active: true },
-    { id: makeId(), type: "নগদ", number: "এডমিন প্যানেল থেকে আপডেট করুন", holder: "Khidmatul Ummah", instruction: "নগদ একাউন্ট তথ্য এডমিন প্যানেল থেকে আপডেট করুন।", active: false },
-    { id: makeId(), type: "ব্যাংক জমা", number: "এডমিন প্যানেল থেকে আপডেট করুন", holder: "Khidmatul Ummah", instruction: "ব্যাংক তথ্য এডমিন প্যানেল থেকে আপডেট করুন।", active: false }
+    { id: makeId(), type: "বিকাশ", number: "+৮৮০ ১৮৬৪৫৮৯৮৭৮", holder: "মুহাম্মাদ বেলাল", instruction: "পার্সোনাল বিকাশে দান পাঠানোর পর লেনদেন নম্বর সংরক্ষণ করুন।", active: true },
+    { id: makeId(), type: "নগদ", number: "+৮৮০ ১৮৬৩৬৩৪৫৮১", holder: "কাজী রিয়াল", instruction: "নগদ পার্সোনাল নম্বরে দান পাঠিয়ে লেনদেন নম্বর সংরক্ষণ করুন।", active: true },
+    { id: makeId(), type: "ব্যাংক জমা", number: "এডমিন প্যানেল থেকে আপডেট করুন", holder: "খিদমাতুল উম্মাহ", instruction: "ব্যাংক তথ্য এডমিন প্যানেল থেকে আপডেট করুন।", active: false }
   ],
   books: [
     { id: makeId(), name: "রিয়াদুস সালেহীন", author: "ইমাম নববী (রহ.)", category: "হাদিস", language: "বাংলা", quantity: 2, status: "উপলব্ধ", coverUrl: "", description: "আখলাক ও আমলের গুরুত্বপূর্ণ হাদিস সংকলন।" },
@@ -163,7 +163,7 @@ function makeId() {
 function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
 function mergeKUData(defaultData, savedData) {
-  return {
+  const merged = {
     ...defaultData,
     ...savedData,
     texts: { ...defaultData.texts, ...(savedData.texts || {}) },
@@ -174,6 +174,40 @@ function mergeKUData(defaultData, savedData) {
     donations: Array.isArray(savedData.donations) ? savedData.donations : defaultData.donations,
     donors: Array.isArray(savedData.donors) ? savedData.donors : defaultData.donors
   };
+  migrateKUData(merged);
+  return merged;
+}
+
+function migrateKUData(data) {
+  if (!data.texts) data.texts = {};
+  const currentDefaults = KU_DEFAULT_DATA.texts;
+  [
+    "adminTopIntro",
+    "adminQuickNotesText",
+    "adminDonationsIntro",
+    "adminDonorsIntro",
+    "adminNavLibrary",
+    "adminLibraryTitle",
+    "adminBackupIntro"
+  ].forEach(key => {
+    data.texts[key] = currentDefaults[key];
+  });
+  if (!Array.isArray(data.accounts)) data.accounts = [];
+  const nagad = data.accounts.find(a => a.type === "নগদ");
+  if (nagad) {
+    nagad.number = "+৮৮০ ১৮৬৩৬৩৪৫৮১";
+    nagad.holder = "কাজী রিয়াল";
+    nagad.instruction = "নগদ পার্সোনাল নম্বরে দান পাঠিয়ে লেনদেন নম্বর সংরক্ষণ করুন।";
+    nagad.active = true;
+  } else {
+    data.accounts.push({ id: makeId(), type: "নগদ", number: "+৮৮০ ১৮৬৩৬৩৪৫৮১", holder: "কাজী রিয়াল", instruction: "নগদ পার্সোনাল নম্বরে দান পাঠিয়ে লেনদেন নম্বর সংরক্ষণ করুন।", active: true });
+  }
+  data.accounts.forEach(account => {
+    if (typeof account.gatewayUrl !== "string") account.gatewayUrl = "";
+    if (typeof account.qrImage !== "string") account.qrImage = "";
+    if (account.holder === "Khidmatul Ummah") account.holder = "খিদমাতুল উম্মাহ";
+    if (account.instruction) account.instruction = account.instruction.replace("Transaction ID", "লেনদেন নম্বর");
+  });
 }
 
 function loadKUData() {
@@ -243,7 +277,7 @@ function upsertDonorFromDonation(data, donation) {
   if (!key) return;
   let donor = data.donors.find(d => String(d.mobile || d.email || d.name || "").trim().toLowerCase() === key);
   if (!donor) {
-    donor = { id: makeId(), name: donation.donorName || "", mobile: donation.mobile || "", email: donation.email || "", address: donation.address || "", status: "Active", note: "ওয়েবসাইটের দান ফর্ম থেকে auto যুক্ত", source: "ওয়েবসাইট", totalAmount: 0, totalDonations: 0, lastDonationDate: "" };
+    donor = { id: makeId(), name: donation.donorName || "", mobile: donation.mobile || "", email: donation.email || "", address: donation.address || "", status: "Active", note: "ওয়েবসাইটের দান ফর্ম থেকে স্বয়ংক্রিয়ভাবে যুক্ত", source: "ওয়েবসাইট", totalAmount: 0, totalDonations: 0, lastDonationDate: "" };
     data.donors.push(donor);
   }
   donor.name = donor.name || donation.donorName || "";
@@ -269,3 +303,10 @@ function downloadJSON(filename, data) {
   link.click();
   URL.revokeObjectURL(url);
 }
+
+
+
+
+
+
+

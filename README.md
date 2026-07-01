@@ -1,4 +1,4 @@
-# Khidmatul Ummah Website + Bengali Admin Panel Demo
+﻿# খিদমাতুল উম্মাহ ওয়েবসাইট ও বাংলা এডমিন প্যানেল ডেমো
 
 এই ফোল্ডারে খিদমাতুল উম্মাহ ওয়েবসাইটের updated static demo version আছে।
 
@@ -9,20 +9,21 @@
 - Bengali text wrapping fix করা হয়েছে, যাতে লেখা/card/frame-এর বাইরে না যায়।
 - Admin panel-এর visible menu, heading, button, table text বাংলায় করা হয়েছে।
 - Donor Information নামে আলাদা option যুক্ত করা হয়েছে।
-- Website donation form submit করলে donor information auto donor table-এ যোগ হবে।
-- Admin panel থেকে manually donor add/edit/delete করা যাবে।
-- Text Editor থেকে homepage এবং admin panel-এর main editable text update করা যাবে।
-- Shura Member section-এ স্পষ্ট “নতুন সদস্য” add option রাখা হয়েছে।
-- Completed Project, Upcoming Project, Donation Receipt, Donation Accounts, Library, Shura Member, Backup/Import features রাখা হয়েছে।
+- ওয়েবসাইটের দান ফর্ম জমা দিলে ডোনার তথ্য স্বয়ংক্রিয়ভাবে ডোনার টেবিলে যোগ হবে।
+- এডমিন প্যানেল থেকে হাতে ডোনার যোগ, এডিট ও ডিলিট করা যাবে।
+- টেক্সট এডিটর থেকে হোমপেজ এবং এডমিন প্যানেলের প্রধান লেখা আপডেট করা যাবে।
+- শূরা সদস্য সেকশনে স্পষ্ট “নতুন সদস্য” যোগ করার অপশন রাখা হয়েছে।
+- কমপ্লিট প্রকল্প, পরবর্তী প্রকল্প, দানের রসিদ, দানের একাউন্ট, লাইব্রেরি, শূরা সদস্য, ব্যাকআপ/ইমপোর্ট ফিচার রাখা হয়েছে।
 
 ## ব্যবহার
 
 1. `index.html` open করুন — public website।
 2. `admin.html` open করুন — admin panel।
 3. Demo login:
-   - Username: `admin`
-   - Password: `admin123`
+   - Username: `KU-Admin`
+   - Password: `KU@24445`
 
 ## Important
 
-এটা static demo version। Data browser localStorage-এ save হয়। Real live website-এর জন্য backend, database, secure authentication এবং file storage লাগবে।
+এটা static demo version। তথ্য ব্রাউজারের লোকাল স্টোরেজে সংরক্ষিত হয়। লাইভ ওয়েবসাইটের জন্য নিরাপদ সার্ভার, ডাটাবেজ, সিকিউর লগইন এবং ফাইল স্টোরেজ লাগবে।
+

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
@@ -12,7 +12,6 @@
     <form class="login-card" id="login-form">
       <img src="assets/khidmatul-ummah-official-logo-transparent.png" alt="খিদমাতুল উম্মাহ অফিসিয়াল লোগো">
       <h2 data-text="adminLoginTitle">এডমিন লগইন</h2>
-      <p class="muted" data-text="adminDemoLogin">ডেমো লগইন: admin / admin123</p>
       <label><span data-text="adminUsername">ইউজারনেম</span><input id="login-user" required autocomplete="username"></label>
       <label><span data-text="adminPassword">পাসওয়ার্ড</span><input id="login-pass" type="password" required autocomplete="current-password"></label>
       <button class="btn" type="submit" data-text="adminLoginButton">লগইন করুন</button>
@@ -32,7 +31,7 @@
         <button data-admin-tab="donations" data-text="adminNavDonations">দান ও রসিদ</button>
         <button data-admin-tab="donors" data-text="adminNavDonors">ডোনার তথ্য</button>
         <button data-admin-tab="accounts" data-text="adminNavAccounts">দানের একাউন্ট</button>
-        <button data-admin-tab="library" data-text="adminNavLibrary">লাইব্রেরী</button>
+        <button data-admin-tab="library" data-text="adminNavLibrary">লাইব্রেরি</button>
         <button data-admin-tab="shura" data-text="adminNavShura">শূরা সদস্য</button>
         <button data-admin-tab="texts" data-text="adminNavTexts">টেক্সট ইডিটর</button>
         <button data-admin-tab="backup" data-text="adminNavBackup">ব্যাকআপ / ইমপোর্ট</button>
@@ -44,7 +43,7 @@
         <div>
           <p class="eyebrow" data-text="adminTopEyebrow">এডমিন ড্যাশবোর্ড</p>
           <h1 data-text="adminTopTitle">খিদমাতুল উম্মাহ কন্ট্রোল প্যানেল</h1>
-          <p class="muted" data-text="adminTopIntro">এই ডেমো ভার্সন browser localStorage ব্যবহার করে। Real website-এর জন্য backend/database লাগবে।</p>
+          <p class="muted" data-text="adminTopIntro">এই ডেমো ভার্সনে তথ্য ব্রাউজারের লোকাল স্টোরেজে সংরক্ষিত হয়। লাইভ ওয়েবসাইটের জন্য নিরাপদ সার্ভার, ডাটাবেজ ও লগইন ব্যবস্থা লাগবে।</p>
         </div>
         <div class="action-row">
           <a class="btn soft" href="index.html" target="_blank" data-text="adminViewWebsite">ওয়েবসাইট দেখুন</a>
@@ -56,7 +55,7 @@
         <div class="dashboard-grid" id="dashboard-summary"></div>
         <div class="admin-card">
           <h2 data-text="adminQuickNotesTitle">দ্রুত নোট</h2>
-          <p class="muted" data-text="adminQuickNotesText">হোমপেজের মোট ব্যয় সম্পন্ন প্রকল্পের expense থেকে auto update হয়। Upcoming project published করলে homepage-এ campaign banner হিসেবে highlighted থাকবে।</p>
+          <p class="muted" data-text="adminQuickNotesText">হোমপেজের মোট ব্যয় সম্পন্ন প্রকল্পের ব্যয় থেকে স্বয়ংক্রিয়ভাবে আপডেট হয়। পরবর্তী প্রকল্প প্রকাশ করলে হোমপেজে হাইলাইটেড ব্যানার হিসেবে দেখা যাবে।</p>
         </div>
       </section>
 
@@ -88,7 +87,7 @@
             <label class="full">বিস্তারিত বিবরণ <textarea id="project-details"></textarea></label>
             <label>ফিচার ছবি URL <input id="project-image-url" placeholder="https://..."></label>
             <label>ফিচার ছবি আপলোড <input id="project-image-file" type="file" accept="image/*"></label>
-            <label class="full">ভিডিও লিংক <input id="project-video-url" placeholder="YouTube/Facebook video link"></label>
+            <label class="full">ভিডিও লিংক <input id="project-video-url" placeholder="ভিডিওর লিংক দিন"></label>
             <div class="actions full">
               <button class="btn" type="submit">প্রকল্প সেভ / পাবলিশ করুন</button>
               <button class="btn soft" id="project-clear" type="button">নতুন প্রকল্প যোগ করুন</button>
@@ -104,15 +103,15 @@
       <section class="admin-section" id="tab-donations">
         <div class="table-card">
           <h2 data-text="adminDonationsTitle">দান ও রসিদ ব্যবস্থাপনা</h2>
-          <p class="muted" data-text="adminDonationsIntro">ওয়েবসাইটের donation form submit করলে donor-এর তথ্য এখানে save হবে এবং ডোনার টেবিলেও auto যোগ হবে।</p>
-          <div class="table-wrap"><table><thead><tr><th>রসিদ</th><th>দাতা</th><th>মোবাইল</th><th>ফান্ড</th><th>এমাউন্ট</th><th>পেমেন্ট</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="donation-table"></tbody></table></div>
+          <p class="muted" data-text="adminDonationsIntro">ওয়েবসাইটের দান ফর্ম জমা দিলে দাতার তথ্য এখানে সংরক্ষিত হবে এবং ডোনার টেবিলেও স্বয়ংক্রিয়ভাবে যোগ হবে।</p>
+          <div class="table-wrap"><table><thead><tr><th>রসিদ</th><th>দাতা</th><th>মোবাইল</th><th>ফান্ড</th><th>পরিমাণ</th><th>দান পদ্ধতি</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="donation-table"></tbody></table></div>
         </div>
       </section>
 
       <section class="admin-section" id="tab-donors">
         <div class="form-card">
           <h2 data-text="adminDonorsTitle">ডোনার তথ্য এন্ট্রি ও তালিকা</h2>
-          <p class="muted" data-text="adminDonorsIntro">এখানে manually donor add করা যাবে। ওয়েবসাইট থেকে donation submit করা donor-রাও auto এখানে যুক্ত হবে।</p>
+          <p class="muted" data-text="adminDonorsIntro">এখানে হাতে ডোনার যোগ করা যাবে। ওয়েবসাইট থেকে দান জমা দেওয়া ডোনাররাও স্বয়ংক্রিয়ভাবে এখানে যুক্ত হবে।</p>
           <form id="donor-form" class="form-grid">
             <input type="hidden" id="admin-donor-id">
             <label>ডোনারের নাম <input id="admin-donor-name" required></label>
@@ -146,6 +145,9 @@
             <label>স্ট্যাটাস
               <select id="account-active"><option value="true">সক্রিয়</option><option value="false">নিষ্ক্রিয়</option></select>
             </label>
+            <label class="full">পেমেন্ট গেটওয়ে লিংক <input id="account-gateway-url" placeholder="https://..."></label>
+            <label>QR কোড ছবি URL <input id="account-qr-url" placeholder="https://..."></label>
+            <label>QR কোড ছবি আপলোড <input id="account-qr-file" type="file" accept="image/*"></label>
             <label class="full">নির্দেশনা <textarea id="account-instruction"></textarea></label>
             <div class="actions full">
               <button class="btn" type="submit">একাউন্ট সেভ করুন</button>
@@ -155,13 +157,13 @@
         </div>
         <div class="table-card">
           <h2>দানের একাউন্ট তালিকা</h2>
-          <div class="table-wrap"><table><thead><tr><th>ধরন</th><th>হোল্ডার</th><th>নম্বর</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="account-table"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>ধরন</th><th>হোল্ডার</th><th>নম্বর</th><th>QR</th><th>গেটওয়ে</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="account-table"></tbody></table></div>
         </div>
       </section>
 
       <section class="admin-section" id="tab-library">
         <div class="form-card">
-          <h2 data-text="adminLibraryTitle">লাইব্রেরী / বই ব্যবস্থাপনা</h2>
+          <h2 data-text="adminLibraryTitle">লাইব্রেরি / বই ব্যবস্থাপনা</h2>
           <form id="book-form" class="form-grid">
             <input type="hidden" id="book-id">
             <label>বইয়ের নাম <input id="book-name" required></label>
@@ -204,7 +206,7 @@
               <select id="shura-role"><option>আমির</option><option>সচিব</option><option>শূরা সদস্য</option><option>প্রতিষ্ঠাতা সদস্য</option></select>
             </label>
             <label>সেশন / সাল <input id="shura-session" value="২০২৬"></label>
-            <label>Display Order <input id="shura-order" type="number" value="1"></label>
+            <label>প্রদর্শনের ক্রম <input id="shura-order" type="number" value="1"></label>
             <label>স্ট্যাটাস
               <select id="shura-active"><option value="true">সক্রিয়</option><option value="false">নিষ্ক্রিয়</option></select>
             </label>
@@ -236,7 +238,7 @@
       <section class="admin-section" id="tab-backup">
         <div class="admin-card">
           <h2 data-text="adminBackupTitle">ব্যাকআপ / ইমপোর্ট</h2>
-          <p class="muted" data-text="adminBackupIntro">JSON export করে developer backend database-এ migrate করতে পারবে।</p>
+          <p class="muted" data-text="adminBackupIntro">JSON ব্যাকআপ ডাউনলোড করে পরবর্তীতে সার্ভার ডাটাবেজে স্থানান্তর করা যাবে।</p>
           <div class="action-row">
             <button class="btn" id="export-all" type="button">JSON ব্যাকআপ Export করুন</button>
             <button class="btn danger" id="reset-data" type="button">ডেমো ডাটা Reset করুন</button>
@@ -253,3 +255,4 @@
   <script src="js/admin.js"></script>
 </body>
 </html>
+
