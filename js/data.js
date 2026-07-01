@@ -152,7 +152,15 @@ const KU_DEFAULT_DATA = {
     { id: makeId(), name: "সচিব ২", position: "বিশেষ সদস্য / সচিব", role: "সচিব", phone: "", email: "", bio: "হিসাব, প্রতিবেদন ও যোগাযোগে সহযোগিতা করবেন।", photoUrl: "", session: "২০২৬", active: true, order: 3 }
   ],
   donations: [],
-  donors: []
+  donors: [],
+  reminders: [
+    { type: "কুরআন", category: "দান", reference: "সূরা আল-বাকারা ২:২৬১", text: "আল্লাহর পথে ব্যয়ের দৃষ্টান্ত এমন এক শস্যদানা, যা সাতটি শীষ উৎপন্ন করে; প্রতিটি শীষে থাকে শত দানা। আল্লাহ যাকে চান বহুগুণ বাড়িয়ে দেন।" },
+    { type: "কুরআন", category: "দান", reference: "সূরা আল-বাকারা ২:২৬৭", text: "তোমরা যা উপার্জন করেছ এবং যা আল্লাহ জমিন থেকে বের করেছেন, তার উত্তম অংশ থেকে ব্যয় করো।" },
+    { type: "কুরআন", category: "সদকা", reference: "সূরা আল-বাকারা ২:২৭১", text: "প্রকাশ্যে সদকা করা ভালো; আর গোপনে দরিদ্রদের দিলে তা তোমাদের জন্য আরও উত্তম।" },
+    { type: "কুরআন", category: "ইখলাস", reference: "সূরা আল-হাশর ৫৯:৯", text: "তারা নিজেদের প্রয়োজন থাকা সত্ত্বেও অন্যদের অগ্রাধিকার দেয়; যে নিজ কৃপণতা থেকে রক্ষা পেল, তারাই সফল।" },
+    { type: "হাদিস", category: "সদকা", reference: "সহিহ মুসলিম ২৫৮৮", text: "সদকা সম্পদ কমায় না; আল্লাহ ক্ষমাশীল ব্যক্তির সম্মান বাড়িয়ে দেন এবং আল্লাহর জন্য বিনয়ী ব্যক্তিকে উন্নত করেন।" },
+    { type: "হাদিস", category: "ইখলাস", reference: "সহিহ বুখারি ১", text: "সব আমল নিয়তের ওপর নির্ভরশীল; মানুষ তার নিয়ত অনুযায়ী প্রতিদান পাবে।" }
+  ]
 };
 
 function makeId() {
@@ -172,7 +180,8 @@ function mergeKUData(defaultData, savedData) {
     books: Array.isArray(savedData.books) ? savedData.books : defaultData.books,
     shura: Array.isArray(savedData.shura) ? savedData.shura : defaultData.shura,
     donations: Array.isArray(savedData.donations) ? savedData.donations : defaultData.donations,
-    donors: Array.isArray(savedData.donors) ? savedData.donors : defaultData.donors
+    donors: Array.isArray(savedData.donors) ? savedData.donors : defaultData.donors,
+    reminders: Array.isArray(savedData.reminders) ? savedData.reminders : defaultData.reminders
   };
   migrateKUData(merged);
   return merged;
@@ -193,6 +202,7 @@ function migrateKUData(data) {
     data.texts[key] = currentDefaults[key];
   });
   if (!Array.isArray(data.accounts)) data.accounts = [];
+  if (!Array.isArray(data.reminders) || !data.reminders.length) data.reminders = deepClone(KU_DEFAULT_DATA.reminders);
   const nagad = data.accounts.find(a => a.type === "নগদ");
   if (nagad) {
     nagad.number = "+৮৮০ ১৮৬৩৬৩৪৫৮১";

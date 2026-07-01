@@ -22,12 +22,12 @@
       <a href="#about">পরিচিতি</a>
       <a href="#foundation">ফাউন্ডেশন</a>
       <a href="#projects">প্রকল্প</a>
+      <a href="#zakat">যাকাত ক্যালকুলেটর</a>
       <a href="#donate">দান</a>
       <a href="#reports">প্রতিবেদন</a>
       <a href="#library">লাইব্রেরি</a>
       <a href="#shura">শূরা পরিচিতি</a>
       <a href="#volunteer">স্বেচ্ছাসেবক</a>
-      <a class="admin-link" href="admin.html" data-text="navAdmin">এডমিন প্যানেল</a>
       <a class="social-link facebook" href="https://www.facebook.com/share/1BSDgkgpYw/" target="_blank" rel="noopener noreferrer" aria-label="ফেসবুক পেজ">
         <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14.2 8.1h2.1V4.8c-.4-.1-1.7-.2-3.1-.2-3.1 0-5.2 1.9-5.2 5.4v3H4.6v3.7H8v9.1h4.1v-9.1h3.4l.5-3.7h-3.9v-2.6c0-1.1.3-2.3 2.1-2.3Z"/></svg>
       </a>
@@ -60,6 +60,20 @@
           <p data-text="heroPanelText">খাদ্য, চিকিৎসা, শিক্ষা ও সমাজ উন্নয়ন প্রকল্পের মাধ্যমে ইতোমধ্যে সহায়তা পৌঁছে দেওয়া হয়েছে।</p>
         </div>
       </aside>
+    </section>
+
+    <section class="reminder-strip" aria-live="polite">
+      <div class="reminder-inner">
+        <div>
+          <p class="eyebrow">দ্বীনি স্মরণিকা</p>
+          <h2 id="reminder-title">দান, ইখলাস ও তাকওয়ার আলো</h2>
+        </div>
+        <article class="reminder-card">
+          <span id="reminder-type">আয়াত</span>
+          <p id="reminder-text">আল্লাহর পথে ব্যয় করার ফযিলত স্মরণ করুন।</p>
+          <small id="reminder-reference">সূত্র</small>
+        </article>
+      </div>
     </section>
 
     <section id="foundation" class="section foundation-section">
@@ -467,6 +481,59 @@
       </div>
     </section>
 
+    <section id="zakat" class="section zakat-section">
+      <div class="section-heading">
+        <p class="eyebrow">যাকাত ক্যালকুলেটর</p>
+        <h2>আপনার যাকাতের পরিমাণ সহজে হিসাব করুন</h2>
+        <p>নগদ অর্থ, স্বর্ণ-রূপা, ব্যবসায়িক সম্পদ ও পাওনা যোগ করুন; প্রয়োজনীয় দায় বাদ দিন। নিসাব অতিক্রম করলে মোট যাকাত ২.৫% হিসেবে দেখাবে।</p>
+      </div>
+
+      <div class="zakat-layout">
+        <form class="zakat-card" id="zakat-calculator">
+          <div class="zakat-grid">
+            <label>নিসাব মূল্য, টাকা
+              <input class="zakat-input" id="zakat-nisab" type="number" min="0" step="1" value="75000" inputmode="decimal">
+            </label>
+            <label>নগদ টাকা
+              <input class="zakat-input" id="zakat-cash" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+            <label>ব্যাংক ব্যালেন্স
+              <input class="zakat-input" id="zakat-bank" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+            <label>স্বর্ণের বর্তমান মূল্য
+              <input class="zakat-input" id="zakat-gold" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+            <label>রূপার বর্তমান মূল্য
+              <input class="zakat-input" id="zakat-silver" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+            <label>ব্যবসার পণ্য/স্টক
+              <input class="zakat-input" id="zakat-business" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+            <label>পাওনা/বিনিয়োগ
+              <input class="zakat-input" id="zakat-receivable" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+            <label>বাদযোগ্য ঋণ/দায়
+              <input class="zakat-input" id="zakat-liability" type="number" min="0" step="1" value="0" inputmode="decimal">
+            </label>
+          </div>
+          <div class="zakat-actions">
+            <button class="btn primary" type="button" id="zakat-calculate">হিসাব করুন</button>
+            <button class="btn soft" type="reset" id="zakat-reset">রিসেট</button>
+          </div>
+          <p class="zakat-note">নিসাব মূল্য স্থানীয় স্বর্ণ/রূপার বাজারদর অনুযায়ী পরিবর্তন করে নিন। জটিল সম্পদ বা ব্যবসায়িক হিসাবের ক্ষেত্রে আলেম/বিশেষজ্ঞের পরামর্শ নিন।</p>
+        </form>
+
+        <aside class="zakat-result" aria-live="polite">
+          <span>যাকাতযোগ্য সম্পদ</span>
+          <strong id="zakat-net">৳০</strong>
+          <span>প্রযোজ্য যাকাত</span>
+          <strong class="zakat-payable" id="zakat-payable">৳০</strong>
+          <p id="zakat-status">আপনার তথ্য দিলে হিসাব এখানে দেখা যাবে।</p>
+          <a class="btn primary" href="#donate">যাকাত ফান্ডে দান করুন</a>
+        </aside>
+      </div>
+    </section>
+
     <section id="donate" class="section donation-section">
       <div class="donation-copy">
         <p class="eyebrow">দান</p>
@@ -617,11 +684,14 @@
       <img src="assets/khidmatul-ummah-official-logo-transparent.png" alt="">
       <p data-text="organizationName">খিদমাতুল উম্মাহ</p>
     </div>
-    <p data-text="footerText">© ২০২৬ খিদমাতুল উম্মাহ। এটি ওয়েবসাইটের প্রাথমিক কাঠামো।</p>
+    <div class="footer-actions">
+      <p data-text="footerText">© ২০২৬ খিদমাতুল উম্মাহ। এটি ওয়েবসাইটের প্রাথমিক কাঠামো।</p>
+      <a class="footer-admin-link" href="admin.html" data-text="navAdmin">এডমিন প্যানেল</a>
+    </div>
   </footer>
 
   <script src="js/data.js"></script>
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>
 

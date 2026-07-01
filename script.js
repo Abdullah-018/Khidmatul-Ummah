@@ -5,13 +5,16 @@ function initPublicSite() {
   bindMenu();
   applyEditableTexts();
   renderStats();
+  renderReminder();
   renderDynamicProjects();
   renderDonationAccounts();
+  bindZakatCalculator();
   bindDonationForm();
   bindArchiveButtons();
   renderLibrary();
   bindLibraryFilters();
   renderShura();
+  startReminderRotation();
 }
 
 function bindMenu() {
@@ -46,6 +49,60 @@ function renderStats() {
   const total = totalCompletedExpense(kuData);
   const stat = document.getElementById("home-total-expense");
   if (stat) stat.textContent = `${formatBDT(total || 500000)}+`;
+}
+
+let reminderIndex = -1;
+
+function renderReminder() {
+  const reminders = Array.isArray(kuData.reminders) ? kuData.reminders.filter(item => item && item.text) : [];
+  if (!reminders.length) return;
+  reminderIndex = reminderIndex < 0 ? Math.floor(Math.random() * reminders.length) : (reminderIndex + 1) % reminders.length;
+  const item = reminders[reminderIndex];
+  setText("reminder-type", `${item.type || "স্মরণিকা"} • ${item.category || "আমল"}`);
+  setText("reminder-text", item.text);
+  setText("reminder-reference", item.reference || "");
+}
+
+function startReminderRotation() {
+  if (!document.getElementById("reminder-text")) return;
+  window.setInterval(renderReminder, 9000);
+}
+
+function bindZakatCalculator() {
+  const form = document.getElementById("zakat-calculator");
+  if (!form) return;
+  const calculateButton = document.getElementById("zakat-calculate");
+  const resetButton = document.getElementById("zakat-reset");
+  form.querySelectorAll(".zakat-input").forEach(input => {
+    input.addEventListener("input", calculateZakat);
+  });
+  if (calculateButton) calculateButton.addEventListener("click", calculateZakat);
+  if (resetButton) resetButton.addEventListener("click", () => {
+    setTimeout(calculateZakat, 0);
+  });
+  calculateZakat();
+}
+
+function calculateZakat() {
+  const ids = ["zakat-cash", "zakat-bank", "zakat-gold", "zakat-silver", "zakat-business", "zakat-receivable"];
+  const assets = ids.reduce((sum, id) => sum + getNumberValue(id), 0);
+  const liability = getNumberValue("zakat-liability");
+  const nisab = getNumberValue("zakat-nisab");
+  const net = Math.max(assets - liability, 0);
+  const payable = nisab > 0 && net >= nisab ? net * 0.025 : 0;
+  setText("zakat-net", formatBDT(net));
+  setText("zakat-payable", formatBDT(payable));
+  const status = document.getElementById("zakat-status");
+  if (!status) return;
+  if (!assets && !liability) {
+    status.textContent = "আপনার তথ্য দিলে হিসাব এখানে দেখা যাবে।";
+  } else if (nisab <= 0) {
+    status.textContent = "নিসাব মূল্য লিখলে যাকাত প্রযোজ্য কি না দেখা যাবে।";
+  } else if (payable > 0) {
+    status.textContent = "আপনার সম্পদ নিসাব অতিক্রম করেছে। প্রযোজ্য যাকাত ২.৫% হিসেবে দেখানো হয়েছে।";
+  } else {
+    status.textContent = "বর্তমান হিসাব অনুযায়ী নিসাব পূর্ণ হয়নি, তাই যাকাত প্রযোজ্য নয়।";
+  }
 }
 
 function projectMedia(project) {
@@ -281,6 +338,7 @@ function renderShura() {
 }
 
 function getValue(id) { return document.getElementById(id)?.value.trim() || ""; }
+function getNumberValue(id) { return Number(getValue(id) || 0) || 0; }
 function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || "-"; }
 
 document.addEventListener("DOMContentLoaded", initPublicSite);
