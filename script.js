@@ -7,6 +7,7 @@ function initPublicSite() {
   renderStats();
   renderReminder();
   renderDynamicProjects();
+  bindIslamicCalendar();
   renderDonationAccounts();
   bindZakatCalculator();
   bindDonationForm();
@@ -47,11 +48,36 @@ function applyEditableTexts() {
 
 function renderStats() {
   const total = totalCompletedExpense(kuData);
+  const totalLabel = formatBDT(total);
   const stat = document.getElementById("home-total-expense");
-  if (stat) stat.textContent = `${formatBDT(total || 500000)}+`;
+  if (stat) stat.textContent = totalLabel;
+  const impactTotal = document.querySelector(".impact-metrics article:first-child strong");
+  if (impactTotal) impactTotal.textContent = totalLabel;
+  const activityIntro = document.querySelector('[data-text="activityIntro"]');
+  if (activityIntro) {
+    activityIntro.textContent = `সম্পন্ন প্রকল্পগুলোর মোট ব্যয় ${totalLabel}; প্রতিটি কাজের হিসাব প্রকল্প ব্যয় থেকে স্বয়ংক্রিয়ভাবে আপডেট হয়।`;
+  }
 }
 
 let reminderIndex = -1;
+let calendarCursor = new Date();
+
+const HIJRI_MONTHS = [
+  "মুহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", "জুমাদাল উলা", "জুমাদাস সানি",
+  "রজব", "শাবান", "রমজান", "শাওয়াল", "জিলকদ", "জিলহজ"
+];
+
+const ISLAMIC_EVENTS = [
+  { month: 1, day: 1, title: "হিজরি নববর্ষ" },
+  { month: 1, day: 10, title: "আশুরা" },
+  { month: 7, day: 27, title: "ইসরা ও মিরাজ স্মরণ" },
+  { month: 8, day: 15, title: "শবে বরাত স্মরণ" },
+  { month: 9, day: 1, title: "রমজান শুরু" },
+  { month: 9, day: 27, title: "লাইলাতুল কদর স্মরণ" },
+  { month: 10, day: 1, title: "ঈদুল ফিতর" },
+  { month: 12, day: 9, title: "আরাফার দিন" },
+  { month: 12, day: 10, title: "ঈদুল আজহা" }
+];
 
 function renderReminder() {
   const reminders = Array.isArray(kuData.reminders) ? kuData.reminders.filter(item => item && item.text) : [];
@@ -66,6 +92,131 @@ function renderReminder() {
 function startReminderRotation() {
   if (!document.getElementById("reminder-text")) return;
   window.setInterval(renderReminder, 9000);
+}
+
+function bindIslamicCalendar() {
+  if (!document.getElementById("calendar-grid")) return;
+  const prev = document.getElementById("calendar-prev");
+  const next = document.getElementById("calendar-next");
+  const today = document.getElementById("calendar-today");
+  const convertDate = document.getElementById("calendar-convert-date");
+  if (prev) prev.addEventListener("click", () => changeCalendarMonth(-1));
+  if (next) next.addEventListener("click", () => changeCalendarMonth(1));
+  if (today) today.addEventListener("click", () => {
+    calendarCursor = new Date();
+    renderIslamicCalendar();
+  });
+  if (convertDate) {
+    convertDate.valueAsDate = new Date();
+    convertDate.addEventListener("change", renderHijriConverter);
+  }
+  renderIslamicCalendar();
+  renderHijriConverter();
+}
+
+function changeCalendarMonth(direction) {
+  calendarCursor = new Date(calendarCursor.getFullYear(), calendarCursor.getMonth() + direction, 1);
+  renderIslamicCalendar();
+}
+
+function renderIslamicCalendar() {
+  const grid = document.getElementById("calendar-grid");
+  if (!grid) return;
+  const year = calendarCursor.getFullYear();
+  const month = calendarCursor.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const leadingBlanks = (firstDay.getDay() + 6) % 7;
+  const today = new Date();
+  const todayKey = dateKey(today);
+  const title = document.getElementById("calendar-title");
+  const range = document.getElementById("calendar-hijri-range");
+  const monthDates = Array.from({ length: daysInMonth }, (_, index) => new Date(year, month, index + 1));
+  const firstHijri = getHijriParts(monthDates[0]);
+  const lastHijri = getHijriParts(monthDates[monthDates.length - 1]);
+  if (title) title.textContent = new Intl.DateTimeFormat("bn-BD", { month: "long", year: "numeric" }).format(firstDay);
+  if (range && firstHijri && lastHijri) {
+    const startMonth = HIJRI_MONTHS[firstHijri.month - 1] || "";
+    const endMonth = HIJRI_MONTHS[lastHijri.month - 1] || "";
+    range.textContent = startMonth === endMonth
+      ? `${startMonth} ${formatNumberBN(firstHijri.year)}`
+      : `${startMonth} - ${endMonth} ${formatNumberBN(lastHijri.year)}`;
+  }
+
+  const cells = Array.from({ length: leadingBlanks }, () => `<div class="calendar-day empty"></div>`);
+  monthDates.forEach(date => {
+    const hijri = getHijriParts(date);
+    const event = hijri ? ISLAMIC_EVENTS.find(item => item.month === hijri.month && item.day === hijri.day) : null;
+    cells.push(`
+      <div class="calendar-day ${dateKey(date) === todayKey ? "today" : ""} ${event ? "has-event" : ""}">
+        <strong>${formatNumberBN(date.getDate())}</strong>
+        <span>${hijri ? formatNumberBN(hijri.day) : "-"}</span>
+        ${event ? `<small>${escapeHTML(event.title)}</small>` : ""}
+      </div>
+    `);
+  });
+  grid.innerHTML = cells.join("");
+  renderTodayHijri(today);
+  renderIslamicEvents(monthDates);
+}
+
+function renderTodayHijri(date) {
+  const hijri = getHijriParts(date);
+  setText("today-gregorian", new Intl.DateTimeFormat("bn-BD", { dateStyle: "full" }).format(date));
+  setText("today-hijri", hijri ? formatHijriDate(hijri) : "হিজরি তারিখ পাওয়া যায়নি");
+}
+
+function renderIslamicEvents(dates) {
+  const wrap = document.getElementById("calendar-events");
+  if (!wrap) return;
+  const events = dates.map(date => {
+    const hijri = getHijriParts(date);
+    if (!hijri) return null;
+    const event = ISLAMIC_EVENTS.find(item => item.month === hijri.month && item.day === hijri.day);
+    return event ? { ...event, date, hijri } : null;
+  }).filter(Boolean);
+  wrap.innerHTML = events.length ? events.map(event => `
+    <div class="event-item">
+      <span>${formatDateBN(event.date.toISOString())}</span>
+      <strong>${escapeHTML(event.title)}</strong>
+      <small>${formatHijriDate(event.hijri)}</small>
+    </div>
+  `).join("") : `<p class="muted">এই Gregorian মাসে নির্ধারিত বিশেষ দিন পাওয়া যায়নি।</p>`;
+}
+
+function renderHijriConverter() {
+  const input = document.getElementById("calendar-convert-date");
+  const result = document.getElementById("calendar-convert-result");
+  if (!input || !result || !input.value) return;
+  const date = new Date(input.value + "T00:00:00");
+  const hijri = getHijriParts(date);
+  result.textContent = hijri ? `${formatDateBN(date.toISOString())} = ${formatHijriDate(hijri)}` : "এই তারিখ রূপান্তর করা যায়নি।";
+}
+
+function getHijriParts(date) {
+  try {
+    const parts = new Intl.DateTimeFormat("en-u-ca-islamic", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric"
+    }).formatToParts(date);
+    return {
+      day: Number(parts.find(part => part.type === "day")?.value || 0),
+      month: Number(parts.find(part => part.type === "month")?.value || 0),
+      year: Number(parts.find(part => part.type === "year")?.value || 0)
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+function formatHijriDate(hijri) {
+  const month = HIJRI_MONTHS[hijri.month - 1] || "";
+  return `${formatNumberBN(hijri.day)} ${month} ${formatNumberBN(hijri.year)} হিজরি`;
+}
+
+function dateKey(date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
 
 function bindZakatCalculator() {
@@ -324,7 +475,7 @@ function renderLibrary() {
 function renderShura() {
   const grid = document.getElementById("shura-grid");
   if (!grid) return;
-  const members = kuData.shura.filter(m => m.active).sort((a,b)=>Number(a.order || 0)-Number(b.order || 0));
+  const members = orderedShuraMembers(kuData.shura.filter(m => m.active));
   grid.innerHTML = members.length ? members.map(member => `
     <article class="member-card">
       <div class="member-photo">${member.photoUrl ? `<img src="${member.photoUrl}" alt="${escapeHTML(member.name)}">` : escapeHTML((member.name || "KU").slice(0, 2))}</div>
@@ -335,6 +486,26 @@ function renderShura() {
       <small>সেশন: ${escapeHTML(member.session || "")}</small>
     </article>
   `).join("") : `<article class="member-card"><p class="muted">শূরা সদস্য তথ্য এখনো publish করা হয়নি।</p></article>`;
+}
+
+function normalizeShuraOrder(value, fallback = 1) {
+  const order = Number(value || fallback);
+  if (!Number.isFinite(order)) return fallback;
+  return Math.min(Math.max(Math.round(order), 1), 21);
+}
+
+function orderedShuraMembers(members) {
+  const used = new Set();
+  return [...members].map((member, index) => {
+    let displayOrder = normalizeShuraOrder(member.order, index + 1);
+    if (used.has(displayOrder)) {
+      displayOrder = index + 1;
+      while (displayOrder <= 21 && used.has(displayOrder)) displayOrder += 1;
+    }
+    displayOrder = Math.min(displayOrder, 21);
+    used.add(displayOrder);
+    return { ...member, displayOrder };
+  }).sort((a,b)=>a.displayOrder-b.displayOrder);
 }
 
 function getValue(id) { return document.getElementById(id)?.value.trim() || ""; }

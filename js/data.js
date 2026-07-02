@@ -26,7 +26,7 @@ const KU_DEFAULT_DATA = {
     foundationIntro: "খিদমাতুল উম্মাহ-এর কাজ শুধু দান-সদকা নয়; কুরআন ও সুন্নাহর আলোকে ইনসাফভিত্তিক, সচেতন ও দায়িত্বশীল সমাজ গড়ে তোলাই আমাদের মূল ফিকির।",
     activityEyebrow: "উল্লেখযোগ্য কার্যক্রম",
     activityTitle: "এখন পর্যন্ত জনকল্যাণমূলক কাজ",
-    activityIntro: "আলোচনার ভিত্তিতে এখন পর্যন্ত ৫ লক্ষ টাকারও অধিক জনকল্যাণমূলক কাজ সম্পন্ন হয়েছে।",
+    activityIntro: "সম্পন্ন প্রকল্পগুলোর মোট ব্যয়ের ভিত্তিতে জনকল্যাণমূলক কাজের হিসাব স্বয়ংক্রিয়ভাবে আপডেট হয়।",
     reportEyebrow: "জবাবদিহিতা",
     reportTitle: "স্বচ্ছতা ও প্রতিবেদন",
     volunteerEyebrow: "স্বেচ্ছাসেবক উন্নয়ন",
@@ -203,6 +203,18 @@ function migrateKUData(data) {
   });
   if (!Array.isArray(data.accounts)) data.accounts = [];
   if (!Array.isArray(data.reminders) || !data.reminders.length) data.reminders = deepClone(KU_DEFAULT_DATA.reminders);
+  if (!Array.isArray(data.shura)) data.shura = [];
+  const usedShuraOrders = new Set();
+  data.shura.forEach((member, index) => {
+    const rawOrder = Number(member.order);
+    let order = Number.isFinite(rawOrder) ? Math.round(rawOrder) : index + 1;
+    if (order < 1 || order > 21 || usedShuraOrders.has(order)) {
+      order = index + 1;
+      while (order <= 21 && usedShuraOrders.has(order)) order += 1;
+    }
+    member.order = Math.min(Math.max(order, 1), 21);
+    usedShuraOrders.add(member.order);
+  });
   const nagad = data.accounts.find(a => a.type === "নগদ");
   if (nagad) {
     nagad.number = "+৮৮০ ১৮৬৩৬৩৪৫৮১";

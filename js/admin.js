@@ -316,7 +316,7 @@ function bindShuraForm() {
     const id = getVal("shura-id") || makeId();
     const existing = data.shura.find(m => m.id === id) || {};
     const fileData = await fileToDataURL(document.getElementById("shura-photo-file").files[0]);
-    const member = { id, name: getVal("shura-name"), position: getVal("shura-position"), role: getVal("shura-role"), session: getVal("shura-session"), order: Number(getVal("shura-order") || 0), active: getVal("shura-active") === "true", phone: getVal("shura-phone"), email: getVal("shura-email"), photoUrl: fileData || getVal("shura-photo-url") || existing.photoUrl || "", bio: getVal("shura-bio") };
+    const member = { id, name: getVal("shura-name"), position: getVal("shura-position"), role: getVal("shura-role"), session: getVal("shura-session"), order: normalizeShuraOrder(getVal("shura-order")), active: getVal("shura-active") === "true", phone: getVal("shura-phone"), email: getVal("shura-email"), photoUrl: fileData || getVal("shura-photo-url") || existing.photoUrl || "", bio: getVal("shura-bio") };
     upsert(data.shura, member);
     clearShuraForm();
     saveAndRender();
@@ -324,11 +324,38 @@ function bindShuraForm() {
   document.getElementById("shura-clear").addEventListener("click", clearShuraForm);
   document.getElementById("shura-new").addEventListener("click", clearShuraForm);
 }
-function clearShuraForm() { document.getElementById("shura-form").reset(); setVal("shura-id", ""); setVal("shura-session", "২০২৬"); setVal("shura-order", 1); setVal("shura-active", "true"); }
-function renderShuraTable() {
-  document.getElementById("shura-table").innerHTML = [...data.shura].sort((a,b)=>Number(a.order||0)-Number(b.order||0)).map(m => `<tr><td>${escapeHTML(m.name)}</td><td>${escapeHTML(m.position)}</td><td>${escapeHTML(m.role)}</td><td>${escapeHTML(m.session)}</td><td>${m.active ? "সক্রিয়" : "নিষ্ক্রিয়"}</td><td><div class="action-row"><button class="btn small soft" onclick="editShura('${m.id}')">এডিট</button><button class="btn small danger" onclick="deleteShura('${m.id}')">ডিলিট</button></div></td></tr>`).join("");
+function normalizeShuraOrder(value, fallback = 1) {
+  const order = Number(value || fallback);
+  if (!Number.isFinite(order)) return fallback;
+  return Math.min(Math.max(Math.round(order), 1), 21);
 }
-window.editShura = function(id) { const m = data.shura.find(item => item.id === id); if (!m) return; setVal("shura-id", m.id); setVal("shura-name", m.name); setVal("shura-position", m.position); setVal("shura-role", m.role); setVal("shura-session", m.session); setVal("shura-order", m.order); setVal("shura-active", String(m.active)); setVal("shura-phone", m.phone); setVal("shura-email", m.email); setVal("shura-photo-url", m.photoUrl && !m.photoUrl.startsWith("data:") ? m.photoUrl : ""); setVal("shura-bio", m.bio); openTab("shura"); };
+function nextShuraOrder() {
+  const used = new Set((data.shura || []).map(member => normalizeShuraOrder(member.order)));
+  for (let order = 1; order <= 21; order += 1) {
+    if (!used.has(order)) return order;
+  }
+  return 21;
+}
+function orderedShuraMembers(members) {
+  const used = new Set();
+  return [...members].map((member, index) => {
+    let displayOrder = normalizeShuraOrder(member.order, index + 1);
+    if (used.has(displayOrder)) {
+      displayOrder = index + 1;
+      while (displayOrder <= 21 && used.has(displayOrder)) displayOrder += 1;
+    }
+    displayOrder = Math.min(displayOrder, 21);
+    used.add(displayOrder);
+    return { ...member, displayOrder };
+  }).sort((a,b)=>a.displayOrder-b.displayOrder);
+}
+function clearShuraForm() { document.getElementById("shura-form").reset(); setVal("shura-id", ""); setVal("shura-session", "২০২৬"); setVal("shura-order", nextShuraOrder()); setVal("shura-active", "true"); }
+function renderShuraTable() {
+  document.getElementById("shura-table").innerHTML = orderedShuraMembers(data.shura)
+    .map((m, index) => `<tr><td><b>${formatNumberBN(m.displayOrder || index + 1)}</b></td><td>${escapeHTML(m.name)}</td><td>${escapeHTML(m.position)}</td><td>${escapeHTML(m.role)}</td><td>${escapeHTML(m.session)}</td><td>${m.active ? "সক্রিয়" : "নিষ্ক্রিয়"}</td><td><div class="action-row"><button class="btn small soft" onclick="editShura('${m.id}')">এডিট</button><button class="btn small danger" onclick="deleteShura('${m.id}')">ডিলিট</button></div></td></tr>`)
+    .join("");
+}
+window.editShura = function(id) { const m = data.shura.find(item => item.id === id); if (!m) return; setVal("shura-id", m.id); setVal("shura-name", m.name); setVal("shura-position", m.position); setVal("shura-role", m.role); setVal("shura-session", m.session); setVal("shura-order", normalizeShuraOrder(m.order)); setVal("shura-active", String(m.active)); setVal("shura-phone", m.phone); setVal("shura-email", m.email); setVal("shura-photo-url", m.photoUrl && !m.photoUrl.startsWith("data:") ? m.photoUrl : ""); setVal("shura-bio", m.bio); openTab("shura"); };
 window.deleteShura = function(id) { if (confirm("এই সদস্যকে ডিলিট করতে চান?")) { data.shura = data.shura.filter(m => m.id !== id); saveAndRender(); } };
 
 function renderTextEditor() {
