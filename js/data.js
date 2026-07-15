@@ -1,4 +1,5 @@
 ﻿const KU_STORAGE_KEY = "khidmatulUmmahCMS_v3_bangla_admin";
+let KU_MEMORY_DATA = null;
 
 const KU_DEFAULT_DATA = {
   texts: {
@@ -234,6 +235,9 @@ function migrateKUData(data) {
 
 function loadKUData() {
   try {
+    if (typeof localStorage === "undefined") {
+      return KU_MEMORY_DATA ? mergeKUData(deepClone(KU_DEFAULT_DATA), KU_MEMORY_DATA) : deepClone(KU_DEFAULT_DATA);
+    }
     const raw = localStorage.getItem(KU_STORAGE_KEY);
     if (!raw) {
       const seeded = deepClone(KU_DEFAULT_DATA);
@@ -243,13 +247,20 @@ function loadKUData() {
     return mergeKUData(deepClone(KU_DEFAULT_DATA), JSON.parse(raw));
   } catch (error) {
     console.error("LocalStorage data load failed", error);
-    const seeded = deepClone(KU_DEFAULT_DATA);
-    saveKUData(seeded);
-    return seeded;
+    return KU_MEMORY_DATA ? mergeKUData(deepClone(KU_DEFAULT_DATA), KU_MEMORY_DATA) : deepClone(KU_DEFAULT_DATA);
   }
 }
 
-function saveKUData(data) { localStorage.setItem(KU_STORAGE_KEY, JSON.stringify(data)); }
+function saveKUData(data) {
+  KU_MEMORY_DATA = deepClone(data);
+  try {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(KU_STORAGE_KEY, JSON.stringify(data));
+    }
+  } catch (error) {
+    console.warn("LocalStorage data save skipped", error);
+  }
+}
 function resetKUData() { const seeded = deepClone(KU_DEFAULT_DATA); saveKUData(seeded); return seeded; }
 
 function formatBDT(value) {
@@ -325,6 +336,9 @@ function downloadJSON(filename, data) {
   link.click();
   URL.revokeObjectURL(url);
 }
+
+
+
 
 
 

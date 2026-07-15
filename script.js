@@ -1,7 +1,10 @@
 let kuData = loadKUData();
 let archiveVisible = false;
 
-function initPublicSite() {
+async function initPublicSite() {
+  if (typeof loadKUDataAsync === "function") {
+    kuData = await loadKUDataAsync();
+  }
   bindMenu();
   applyEditableTexts();
   renderStats();
@@ -392,7 +395,7 @@ function bindDonationForm() {
   const form = document.getElementById("donation-form");
   const printButton = document.getElementById("print-receipt");
   if (!form) return;
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const selected = document.querySelector('input[name="payment-method"]:checked');
     const account = kuData.accounts.find(a => a.id === selected?.value) || kuData.accounts.find(a => a.active);
@@ -412,12 +415,16 @@ function bindDonationForm() {
       status: "Pending",
       adminNote: ""
     };
-    kuData.donations.push(donation);
-    upsertDonorFromDonation(kuData, donation);
-    saveKUData(kuData);
-    renderReceipt(donation);
-    form.reset();
-    renderDonationAccounts();
+    try {
+      const savedDonation = typeof addDonationAsync === "function"
+        ? await addDonationAsync(kuData, donation)
+        : donation;
+      renderReceipt(savedDonation);
+      form.reset();
+      renderDonationAccounts();
+    } catch (error) {
+      alert("দান তথ্য সেভ করা যায়নি। একটু পরে আবার চেষ্টা করুন।");
+    }
   });
   if (printButton) printButton.addEventListener("click", () => window.print());
 }
