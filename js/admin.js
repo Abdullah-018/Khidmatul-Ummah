@@ -102,7 +102,8 @@ function bindLogin() {
       if (typeof loadKUDataAsync === "function") data = await loadKUDataAsync();
       showAdminApp();
     } catch (error) {
-      document.getElementById("login-error").textContent = "ইউজারনেম বা পাসওয়ার্ড সঠিক নয়।";
+      const detail = error?.message ? ` (${error.message})` : "";
+      document.getElementById("login-error").textContent = `ইউজারনেম বা পাসওয়ার্ড সঠিক নয়।${detail}`;
     }
   });
   document.getElementById("logout-btn").addEventListener("click", async () => {

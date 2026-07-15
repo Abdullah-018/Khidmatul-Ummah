@@ -94,7 +94,13 @@
 
   window.signInAdminAsync = async function signInAdminAsync(user, password) {
     if (!client) return user === "KU-Admin" && password === "KU@24445";
-    const email = user.includes("@") ? user : `${user.toLowerCase()}@khidmatul-ummah.local`;
+    const aliases = {
+      "ku-admin": "ku-admin@khidmatul-ummah.local",
+      "ku_admin": "ku-admin@khidmatul-ummah.local",
+      "kuadmin": "ku-admin@khidmatul-ummah.local"
+    };
+    const normalizedUser = user.trim().toLowerCase();
+    const email = user.includes("@") ? normalizedUser : (aliases[normalizedUser] || `${normalizedUser}@khidmatul-ummah.local`);
     const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return true;
