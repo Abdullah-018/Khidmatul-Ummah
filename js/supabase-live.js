@@ -1,11 +1,24 @@
 (function () {
   const config = window.KU_SUPABASE_CONFIG || {};
-  const hasClient = Boolean(window.supabase && config.url && config.anonKey);
+  const hasClient = Boolean(window.supabase && isValidSupabaseUrl(config.url) && isUsableAnonKey(config.anonKey));
   const client = hasClient ? window.supabase.createClient(config.url, config.anonKey) : null;
   const stateId = config.stateId || "main";
 
   window.KU_SUPABASE_ENABLED = Boolean(client);
   window.kuSupabase = client;
+
+  if (!client) {
+    console.info("Supabase is not configured. The site is running in local fallback mode.");
+  }
+
+  function isValidSupabaseUrl(url) {
+    return /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(String(url || "").trim());
+  }
+
+  function isUsableAnonKey(key) {
+    const value = String(key || "").trim();
+    return value.startsWith("sb_publishable_") || value.startsWith("eyJ");
+  }
 
   function normalizeState(payload) {
     return mergeKUData(deepClone(KU_DEFAULT_DATA), payload || {});
