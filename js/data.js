@@ -200,7 +200,7 @@ function migrateKUData(data) {
     "adminLibraryTitle",
     "adminBackupIntro"
   ].forEach(key => {
-    data.texts[key] = currentDefaults[key];
+    if (!data.texts[key]) data.texts[key] = currentDefaults[key];
   });
   if (!Array.isArray(data.accounts)) data.accounts = [];
   if (!Array.isArray(data.reminders) || !data.reminders.length) data.reminders = deepClone(KU_DEFAULT_DATA.reminders);
