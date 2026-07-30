@@ -82,6 +82,7 @@ async function initAdmin() {
   bindShuraForm();
   bindDonorForm();
   bindBackupTools();
+  refreshShuraRoleOptions();
   renderTextEditor();
   renderAll();
   if (typeof hasAdminSessionAsync === "function" && await hasAdminSessionAsync()) showAdminApp();
@@ -338,6 +339,7 @@ function bindShuraForm() {
     const fileData = await getAdminAsset("shura-photos", document.getElementById("shura-photo-file").files[0], "shura");
     const member = { id, name: getVal("shura-name"), position: getVal("shura-position"), role: getVal("shura-role"), session: getVal("shura-session"), order: normalizeShuraOrder(getVal("shura-order")), active: getVal("shura-active") === "true", phone: getVal("shura-phone"), email: getVal("shura-email"), photoUrl: fileData || getVal("shura-photo-url") || existing.photoUrl || "", bio: getVal("shura-bio") };
     upsert(data.shura, member);
+    refreshShuraRoleOptions();
     clearShuraForm();
     await saveAndRender();
   });
@@ -369,8 +371,17 @@ function orderedShuraMembers(members) {
     return { ...member, displayOrder };
   }).sort((a,b)=>a.displayOrder-b.displayOrder);
 }
-function clearShuraForm() { document.getElementById("shura-form").reset(); setVal("shura-id", ""); setVal("shura-session", "২০২৬"); setVal("shura-order", nextShuraOrder()); setVal("shura-active", "true"); }
+function clearShuraForm() { document.getElementById("shura-form").reset(); setVal("shura-id", ""); setVal("shura-role", "শূরা সদস্য"); setVal("shura-session", "২০২৬"); setVal("shura-order", nextShuraOrder()); setVal("shura-active", "true"); }
+function refreshShuraRoleOptions() {
+  const list = document.getElementById("shura-role-options");
+  if (!list) return;
+  const defaults = ["আমির", "সচিব", "শূরা সদস্য", "প্রতিষ্ঠাতা সদস্য"];
+  const saved = (data.shura || []).map(member => member.role).filter(Boolean);
+  const roles = [...new Set([...defaults, ...saved])];
+  list.innerHTML = roles.map(role => `<option value="${escapeHTML(role)}"></option>`).join("");
+}
 function renderShuraTable() {
+  refreshShuraRoleOptions();
   document.getElementById("shura-table").innerHTML = orderedShuraMembers(data.shura)
     .map((m, index) => `<tr><td><b>${formatNumberBN(m.displayOrder || index + 1)}</b></td><td>${escapeHTML(m.name)}</td><td>${escapeHTML(m.position)}</td><td>${escapeHTML(m.role)}</td><td>${escapeHTML(m.session)}</td><td>${m.active ? "সক্রিয়" : "নিষ্ক্রিয়"}</td><td><div class="action-row"><button class="btn small soft" onclick="editShura('${m.id}')">এডিট</button><button class="btn small danger" onclick="deleteShura('${m.id}')">ডিলিট</button></div></td></tr>`)
     .join("");
