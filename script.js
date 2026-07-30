@@ -18,6 +18,7 @@ async function initPublicSite() {
   renderLibrary();
   bindLibraryFilters();
   renderShura();
+  bindShuraToggle();
   startReminderRotation();
 }
 
@@ -499,6 +500,19 @@ function normalizeShuraOrder(value, fallback = 1) {
   const order = Number(value || fallback);
   if (!Number.isFinite(order)) return fallback;
   return Math.min(Math.max(Math.round(order), 1), 21);
+}
+
+function bindShuraToggle() {
+  const button = document.getElementById("shura-toggle");
+  const panel = document.getElementById("shura-panel");
+  if (!button || !panel) return;
+  button.addEventListener("click", () => {
+    const willShow = panel.hidden;
+    panel.hidden = !willShow;
+    button.setAttribute("aria-expanded", String(willShow));
+    button.textContent = willShow ? "শূরা সদস্য লুকান" : "শূরা সদস্য দেখুন";
+    if (willShow) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
 }
 
 function orderedShuraMembers(members) {

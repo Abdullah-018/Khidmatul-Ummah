@@ -1303,6 +1303,34 @@ th, td { word-break: normal; overflow-wrap: anywhere; }
 .foundation-grid .lead-card { flex-basis: min(520px, 88vw); }
 .vision-grid span { white-space: normal; }
 
+/* Shura section uses an expandable card grid instead of the compact slider. */
+.shura-toggle-btn {
+  margin-top: 18px;
+}
+.shura-panel[hidden] {
+  display: none !important;
+}
+.shura-panel {
+  animation: softRise .28s ease both;
+}
+.shura-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  flex-wrap: initial !important;
+  overflow-x: visible !important;
+  scroll-snap-type: none !important;
+  gap: 18px;
+  padding-bottom: 0;
+}
+.shura-grid > * {
+  flex: initial !important;
+  scroll-snap-align: none !important;
+  min-width: 0;
+}
+.shura-grid .member-card {
+  min-height: 100%;
+}
+
 /* Final fit guard for impact numbers */
 .impact-metrics {
   grid-template-columns: repeat(3, minmax(190px, 1fr)) !important;

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>এডমিন প্যানেল | খিদমাতুল উম্মাহ</title>
   <meta name="theme-color" content="#51c424">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=15">
 </head>
 <body class="admin-body">
   <section id="login-screen" class="admin-login">
@@ -203,7 +203,8 @@
             <label>সদস্যের নাম <input id="shura-name" required></label>
             <label>পদবি / দায়িত্ব <input id="shura-position" required></label>
             <label>রোল টাইপ
-              <select id="shura-role"><option>আমির</option><option>সচিব</option><option>শূরা সদস্য</option><option>প্রতিষ্ঠাতা সদস্য</option></select>
+              <input id="shura-role" list="shura-role-options" placeholder="রোল টাইপ লিখুন বা সিলেক্ট করুন">
+              <datalist id="shura-role-options"></datalist>
             </label>
             <label>সেশন / সাল <input id="shura-session" value="২০২৬"></label>
             <label>প্রদর্শনের ক্রম
@@ -276,10 +277,10 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/data.js?v=13"></script>
-  <script src="js/supabase-config.js?v=13"></script>
-  <script src="js/supabase-live.js?v=13"></script>
-  <script src="js/admin.js?v=13"></script>
+  <script src="js/data.js?v=15"></script>
+  <script src="js/supabase-config.js?v=15"></script>
+  <script src="js/supabase-live.js?v=15"></script>
+  <script src="js/admin.js?v=15"></script>
 </body>
 </html>
 
