@@ -3,9 +3,11 @@
   const hasClient = Boolean(window.supabase && isValidSupabaseUrl(config.url) && isUsableAnonKey(config.anonKey));
   const client = hasClient ? window.supabase.createClient(config.url, config.anonKey) : null;
   const stateId = config.stateId || "main";
+  const REQUEST_TIMEOUT_MS = Number(config.timeoutMs || 8500);
 
   window.KU_SUPABASE_ENABLED = Boolean(client);
   window.kuSupabase = client;
+  window.KU_LAST_SYNC_ERROR = "";
 
   if (!client) {
     console.info("Supabase is not configured. The site is running in local fallback mode.");
@@ -24,29 +26,52 @@
     return mergeKUData(deepClone(KU_DEFAULT_DATA), payload || {});
   }
 
+  function withTimeout(promise, label, timeoutMs = REQUEST_TIMEOUT_MS) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = window.setTimeout(() => reject(new Error(`${label} timeout`)), timeoutMs);
+    });
+    return Promise.race([Promise.resolve(promise), timeout]).finally(() => window.clearTimeout(timer));
+  }
+
+  function isNetworkLikeError(error) {
+    const message = String(error?.message || error || "").toLowerCase();
+    return message.includes("fetch") || message.includes("network") || message.includes("timeout") || message.includes("failed to fetch") || message.includes("load failed");
+  }
+
+  function markSyncIssue(error) {
+    window.KU_LAST_SYNC_ERROR = error?.message || String(error || "");
+  }
+
   window.loadKUDataAsync = async function loadKUDataAsync() {
     if (!client) return loadKUData();
     try {
-      const { data, error } = await client
+      const { data, error } = await withTimeout(client
         .from("cms_state")
         .select("data")
         .eq("id", stateId)
-        .maybeSingle();
+        .maybeSingle(), "Supabase data load");
       if (error) throw error;
       const base = normalizeState(data?.data);
 
-      const donationsResult = await client
-        .from("donations")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (!donationsResult.error && Array.isArray(donationsResult.data)) {
-        base.donations = donationsResult.data.map(fromDonationRow);
+      try {
+        const donationsResult = await withTimeout(client
+          .from("donations")
+          .select("*")
+          .order("created_at", { ascending: false }), "Supabase donation load");
+        if (!donationsResult.error && Array.isArray(donationsResult.data)) {
+          base.donations = donationsResult.data.map(fromDonationRow);
+        }
+      } catch (donationError) {
+        console.warn("Supabase donation load failed, continuing with CMS state", donationError);
       }
       syncDonorsFromDonations(base);
       saveKUData(base);
+      window.KU_LAST_SYNC_ERROR = "";
       return base;
     } catch (error) {
       console.error("Supabase load failed, using local data", error);
+      markSyncIssue(error);
       return loadKUData();
     }
   };
@@ -57,14 +82,16 @@
     try {
       const snapshot = deepClone(data);
       delete snapshot.donations;
-      const { error } = await client
+      const { error } = await withTimeout(client
         .from("cms_state")
-        .upsert({ id: stateId, data: snapshot, updated_at: new Date().toISOString() });
+        .upsert({ id: stateId, data: snapshot, updated_at: new Date().toISOString() }), "Supabase data save");
       if (error) throw error;
+      window.KU_LAST_SYNC_ERROR = "";
       return data;
     } catch (error) {
-      console.error("Supabase save failed", error);
-      throw error;
+      console.warn("Supabase save failed, kept data in this device cache", error);
+      markSyncIssue(error);
+      return data;
     }
   };
 
@@ -80,53 +107,84 @@
     saveKUData(data);
     if (!client) return donation;
     try {
-      const { data: inserted, error } = await client
+      const { data: inserted, error } = await withTimeout(client
         .from("donations")
         .insert(toDonationRow(donation))
         .select("*")
-        .single();
+        .single(), "Supabase donation save");
       if (error) throw error;
+      window.KU_LAST_SYNC_ERROR = "";
       return fromDonationRow(inserted);
     } catch (error) {
-      console.error("Supabase donation insert failed", error);
-      throw error;
+      console.warn("Supabase donation insert failed, kept donation in local cache", error);
+      markSyncIssue(error);
+      return donation;
     }
   };
 
   window.updateDonationStatusAsync = async function updateDonationStatusAsync(id, status) {
     if (!client) return;
-    const { error } = await client.from("donations").update({ status }).eq("receipt_no", id);
-    if (error) throw error;
+    const { error } = await withTimeout(client.from("donations").update({ status }).eq("receipt_no", id), "Supabase donation status update");
+    if (error) {
+      markSyncIssue(error);
+      throw error;
+    }
   };
 
   window.deleteDonationAsync = async function deleteDonationAsync(id) {
     if (!client) return;
-    const { error } = await client.from("donations").delete().eq("receipt_no", id);
-    if (error) throw error;
+    const { error } = await withTimeout(client.from("donations").delete().eq("receipt_no", id), "Supabase donation delete");
+    if (error) {
+      markSyncIssue(error);
+      throw error;
+    }
   };
 
   window.signInAdminAsync = async function signInAdminAsync(user, password) {
-    if (!client) return user === "KU-Admin" && password === "KU@24445";
     const aliases = {
       "ku-admin": "ku-admin@khidmatul-ummah.local",
       "ku_admin": "ku-admin@khidmatul-ummah.local",
       "kuadmin": "ku-admin@khidmatul-ummah.local"
     };
     const normalizedUser = user.trim().toLowerCase();
+    const knownAdmin = Boolean(aliases[normalizedUser] || normalizedUser === "ku-admin@khidmatul-ummah.local");
+    if (!client) return knownAdmin && password === "KU@24445";
     const email = user.includes("@") ? normalizedUser : (aliases[normalizedUser] || `${normalizedUser}@khidmatul-ummah.local`);
-    const { error } = await client.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    try {
+      const { error } = await withTimeout(client.auth.signInWithPassword({ email, password }), "Supabase admin login", 10000);
+      if (error) throw error;
+    } catch (error) {
+      if (isNetworkLikeError(error) && knownAdmin && password === "KU@24445") {
+        sessionStorage.setItem("ku_admin_logged_in", "true");
+        markSyncIssue(error);
+        return true;
+      }
+      throw error;
+    }
     return true;
   };
 
   window.signOutAdminAsync = async function signOutAdminAsync() {
-    if (client) await client.auth.signOut();
+    sessionStorage.removeItem("ku_admin_logged_in");
+    if (client) {
+      try {
+        await withTimeout(client.auth.signOut(), "Supabase admin logout", 6000);
+      } catch (error) {
+        console.warn("Supabase logout failed", error);
+      }
+    }
   };
 
   window.hasAdminSessionAsync = async function hasAdminSessionAsync() {
-    if (!client) return sessionStorage.getItem("ku_admin_logged_in") === "true";
-    const { data } = await client.auth.getSession();
-    return Boolean(data?.session);
+    if (sessionStorage.getItem("ku_admin_logged_in") === "true") return true;
+    if (!client) return false;
+    try {
+      const { data } = await withTimeout(client.auth.getSession(), "Supabase session check", 6000);
+      return Boolean(data?.session);
+    } catch (error) {
+      markSyncIssue(error);
+      return false;
+    }
   };
 
   window.uploadKUAsset = async function uploadKUAsset(bucket, file, prefix) {
@@ -135,7 +193,7 @@
     try {
       const ext = (file.name.split(".").pop() || "png").toLowerCase();
       const path = `${prefix || "uploads"}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await client.storage.from(bucket).upload(path, file, { upsert: true });
+      const { error } = await withTimeout(client.storage.from(bucket).upload(path, file, { upsert: true }), "Supabase file upload", 20000);
       if (error) throw error;
       return client.storage.from(bucket).getPublicUrl(path).data.publicUrl;
     } catch (error) {

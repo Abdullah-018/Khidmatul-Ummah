@@ -6,5 +6,6 @@
 window.KU_SUPABASE_CONFIG = {
   url: "https://yeubtukgkyhhubfbuepv.supabase.co",
   anonKey: "sb_publishable_GHjYgxE-wSsiIBUGHeBh1A_6upzB5J-",
-  stateId: "main"
+  stateId: "main",
+  timeoutMs: 8500
 };

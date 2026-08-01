@@ -72,7 +72,12 @@ const TEXT_LABELS = [
 
 async function initAdmin() {
   if (typeof loadKUDataAsync === "function") {
-    data = await loadKUDataAsync();
+    try {
+      data = await loadKUDataAsync();
+    } catch (error) {
+      console.warn("Admin live data load failed, using cached data", error);
+      data = loadKUData();
+    }
   }
   syncDonorsFromDonations(data);
   saveKUData(data);
@@ -89,7 +94,11 @@ async function initAdmin() {
   refreshShuraRoleOptions();
   renderTextEditor();
   renderAll();
-  if (typeof hasAdminSessionAsync === "function" && await hasAdminSessionAsync()) showAdminApp();
+  try {
+    if (typeof hasAdminSessionAsync === "function" && await hasAdminSessionAsync()) showAdminApp();
+  } catch (error) {
+    console.warn("Admin session check failed", error);
+  }
 }
 
 function bindLogin() {
@@ -98,17 +107,38 @@ function bindLogin() {
     e.preventDefault();
     const user = document.getElementById("login-user").value.trim();
     const pass = document.getElementById("login-pass").value.trim();
+    const button = form.querySelector('button[type="submit"]');
+    const errorBox = document.getElementById("login-error");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "লগইন হচ্ছে...";
+    }
+    if (errorBox) errorBox.textContent = "";
     try {
       const ok = typeof signInAdminAsync === "function"
         ? await signInAdminAsync(user, pass)
         : user === "KU-Admin" && pass === "KU@24445";
       if (!ok) throw new Error("Login failed");
       sessionStorage.setItem("ku_admin_logged_in", "true");
-      if (typeof loadKUDataAsync === "function") data = await loadKUDataAsync();
+      if (typeof loadKUDataAsync === "function") {
+        try {
+          data = await loadKUDataAsync();
+        } catch (loadError) {
+          console.warn("Login succeeded but live data load failed", loadError);
+          data = loadKUData();
+        }
+      }
       showAdminApp();
     } catch (error) {
-      const detail = error?.message ? ` (${error.message})` : "";
-      document.getElementById("login-error").textContent = `ইউজারনেম বা পাসওয়ার্ড সঠিক নয়।${detail}`;
+      const message = String(error?.message || "");
+      const networkProblem = /fetch|network|timeout|load failed/i.test(message);
+      const detail = networkProblem ? "নেটওয়ার্ক দুর্বল বা Supabase কানেকশন স্লো। আবার চেষ্টা করুন।" : "ইউজারনেম বা পাসওয়ার্ড সঠিক নয়।";
+      if (errorBox) errorBox.textContent = detail;
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = data.texts?.adminLoginButton || "লগইন করুন";
+      }
     }
   });
   document.getElementById("logout-btn").addEventListener("click", async () => {
