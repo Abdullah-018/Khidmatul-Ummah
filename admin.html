@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>এডমিন প্যানেল | খিদমাতুল উম্মাহ</title>
   <meta name="theme-color" content="#51c424">
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body class="admin-body">
   <section id="login-screen" class="admin-login">
@@ -30,6 +30,7 @@
         <button data-admin-tab="projects" data-text="adminNavProjects">প্রকল্প</button>
         <button data-admin-tab="donations" data-text="adminNavDonations">দান ও রসিদ</button>
         <button data-admin-tab="donors" data-text="adminNavDonors">ডোনার তথ্য</button>
+        <button data-admin-tab="beneficiaries" data-text="adminNavBeneficiaries">উপকারভোগী</button>
         <button data-admin-tab="accounts" data-text="adminNavAccounts">দানের একাউন্ট</button>
         <button data-admin-tab="library" data-text="adminNavLibrary">লাইব্রেরি</button>
         <button data-admin-tab="shura" data-text="adminNavShura">শূরা সদস্য</button>
@@ -131,6 +132,103 @@
         <div class="table-card">
           <h2>সকল ডোনার</h2>
           <div class="table-wrap"><table><thead><tr><th>নাম</th><th>মোবাইল</th><th>ইমেইল</th><th>মোট দান</th><th>দান সংখ্যা</th><th>শেষ দান</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="donor-table"></tbody></table></div>
+        </div>
+      </section>
+
+      <section class="admin-section" id="tab-beneficiaries">
+        <div class="form-card">
+          <div class="section-title-row">
+            <div>
+              <h2 data-text="adminBeneficiariesTitle">উপকারভোগী ডাটাবেজ</h2>
+              <p class="muted" data-text="adminBeneficiariesIntro">গ্রামের অসহায় ও দরিদ্র মানুষের তথ্য, অগ্রাধিকার স্কোর এবং প্রকল্পভিত্তিক সহায়তার ইতিহাস শুধু এডমিন প্যানেলে সংরক্ষিত থাকবে।</p>
+            </div>
+            <button class="btn soft" id="beneficiary-new" type="button">+ নতুন উপকারভোগী</button>
+          </div>
+          <form id="beneficiary-form" class="form-grid">
+            <input type="hidden" id="beneficiary-id">
+            <label>নাম <input id="beneficiary-name" required></label>
+            <label>পিতা/স্বামীর নাম <input id="beneficiary-guardian"></label>
+            <label>মোবাইল নম্বর <input id="beneficiary-mobile" inputmode="tel"></label>
+            <label>পাড়া/এলাকা <input id="beneficiary-area" placeholder="যেমন: চালা পূর্বপাড়া"></label>
+            <label class="full">ঠিকানা <textarea id="beneficiary-address"></textarea></label>
+            <label>ক্যাটাগরি
+              <select id="beneficiary-category">
+                <option>সাধারণ অসহায়</option>
+                <option>বিধবা পরিবার</option>
+                <option>এতিম পরিবার</option>
+                <option>বয়স্ক/অসহায়</option>
+                <option>প্রতিবন্ধী পরিবার</option>
+                <option>চিকিৎসা জরুরি</option>
+              </select>
+            </label>
+            <label>যাচাই স্ট্যাটাস
+              <select id="beneficiary-verification">
+                <option>নতুন</option>
+                <option>যাচাই বাকি</option>
+                <option>যাচাইকৃত</option>
+                <option>অগ্রাধিকারপ্রাপ্ত</option>
+                <option>স্থগিত</option>
+              </select>
+            </label>
+            <label>পরিবারের সদস্য সংখ্যা <input id="beneficiary-family" type="number" min="0" value="0"></label>
+            <label>উপার্জনক্ষম সদস্য <input id="beneficiary-earners" type="number" min="0" value="0"></label>
+            <label>মাসিক আয়, টাকা <input id="beneficiary-income" type="number" min="0" value="0"></label>
+            <label>পূর্বে সহায়তা পেয়েছে কয়বার <input id="beneficiary-previous-aid" type="number" min="0" value="0"></label>
+            <label>ঋণ আছে?
+              <select id="beneficiary-debt"><option>না</option><option>হ্যাঁ</option></select>
+            </label>
+            <label>অসুস্থতা আছে?
+              <select id="beneficiary-illness"><option>না</option><option>হ্যাঁ</option></select>
+            </label>
+            <label>প্রতিবন্ধিতা আছে?
+              <select id="beneficiary-disability"><option>না</option><option>হ্যাঁ</option></select>
+            </label>
+            <label>যাচাইকারী/জিম্মাদার <input id="beneficiary-verifier"></label>
+            <fieldset class="beneficiary-needs full">
+              <legend>সহায়তার প্রয়োজন</legend>
+              <label><input type="checkbox" name="beneficiary-need" value="যাকাত"> যাকাত</label>
+              <label><input type="checkbox" name="beneficiary-need" value="খাদ্য"> খাদ্য</label>
+              <label><input type="checkbox" name="beneficiary-need" value="চিকিৎসা"> চিকিৎসা</label>
+              <label><input type="checkbox" name="beneficiary-need" value="শিক্ষা"> শিক্ষা</label>
+              <label><input type="checkbox" name="beneficiary-need" value="ঘর মেরামত"> ঘর মেরামত</label>
+              <label><input type="checkbox" name="beneficiary-need" value="জরুরি সহায়তা"> জরুরি সহায়তা</label>
+            </fieldset>
+            <label class="full">নোট / যাচাই তথ্য <textarea id="beneficiary-note"></textarea></label>
+            <div class="actions full">
+              <button class="btn" type="submit">উপকারভোগী সেভ করুন</button>
+              <button class="btn soft" id="beneficiary-clear" type="button">ফর্ম ক্লিয়ার</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="table-card">
+          <div class="beneficiary-tools">
+            <input id="beneficiary-search" type="search" placeholder="নাম, মোবাইল, এলাকা বা নোট দিয়ে খুঁজুন">
+            <select id="beneficiary-need-filter">
+              <option value="">সব প্রয়োজন</option>
+              <option>যাকাত</option>
+              <option>খাদ্য</option>
+              <option>চিকিৎসা</option>
+              <option>শিক্ষা</option>
+              <option>ঘর মেরামত</option>
+              <option>জরুরি সহায়তা</option>
+            </select>
+            <select id="beneficiary-status-filter">
+              <option value="">সব স্ট্যাটাস</option>
+              <option>নতুন</option>
+              <option>যাচাই বাকি</option>
+              <option>যাচাইকৃত</option>
+              <option>অগ্রাধিকারপ্রাপ্ত</option>
+              <option>স্থগিত</option>
+            </select>
+          </div>
+          <div class="beneficiary-project-box">
+            <select id="beneficiary-project-select"></select>
+            <input id="beneficiary-aid-title" placeholder="সহায়তার ধরন, যেমন: রমজান ফুড প্যাক">
+            <input id="beneficiary-aid-amount" type="number" min="0" placeholder="পরিমাণ/মূল্য">
+            <button class="btn small" type="button" id="beneficiary-add-history">নির্বাচিতদের প্রকল্পে যুক্ত করুন</button>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th><input id="beneficiary-select-all" type="checkbox" aria-label="সব নির্বাচন"></th><th>অগ্রাধিকার</th><th>নাম/এলাকা</th><th>ক্যাটাগরি</th><th>প্রয়োজন</th><th>পরিবার/আয়</th><th>স্ট্যাটাস</th><th>শেষ সহায়তা</th><th>অ্যাকশন</th></tr></thead><tbody id="beneficiary-table"></tbody></table></div>
         </div>
       </section>
 
@@ -277,10 +375,10 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/data.js?v=15"></script>
-  <script src="js/supabase-config.js?v=15"></script>
-  <script src="js/supabase-live.js?v=15"></script>
-  <script src="js/admin.js?v=15"></script>
+  <script src="js/data.js?v=16"></script>
+  <script src="js/supabase-config.js?v=16"></script>
+  <script src="js/supabase-live.js?v=16"></script>
+  <script src="js/admin.js?v=16"></script>
 </body>
 </html>
 
