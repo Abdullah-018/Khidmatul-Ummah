@@ -3,7 +3,12 @@ let archiveVisible = false;
 
 async function initPublicSite() {
   if (typeof loadKUDataAsync === "function") {
-    kuData = await loadKUDataAsync();
+    try {
+      kuData = await loadKUDataAsync();
+    } catch (error) {
+      console.warn("Live data load failed, using cached data", error);
+      kuData = loadKUData();
+    }
   }
   bindMenu();
   applyEditableTexts();
