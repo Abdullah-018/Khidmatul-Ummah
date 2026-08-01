@@ -226,6 +226,28 @@ h5 { font-size: 17px; color: #1c571f; margin-bottom: 6px; }
 }
 .hero-panel-logo img { width: 118px; height: 118px; object-fit: contain; }
 .hero-panel small { color: var(--ku-green); font-weight: 900; }
+.beneficiary-highlight {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #eefbe8, #ffffff);
+  border: 1px solid rgba(81,196,36,.28);
+  box-shadow: 0 14px 28px rgba(9, 59, 23, .08);
+}
+.beneficiary-highlight span {
+  display: block;
+  color: var(--ku-deep);
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1;
+  font-weight: 1000;
+  letter-spacing: 0;
+}
+.beneficiary-highlight p {
+  margin: 8px 0 0;
+  color: #33533a;
+  font-weight: 800;
+  line-height: 1.55;
+}
 .stat, .big-stat {
   display: block;
   font-size: clamp(38px, 5vw, 58px);

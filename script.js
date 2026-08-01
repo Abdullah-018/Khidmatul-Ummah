@@ -55,6 +55,9 @@ function renderStats() {
   const totalLabel = formatBDT(total);
   const stat = document.getElementById("home-total-expense");
   if (stat) stat.textContent = totalLabel;
+  const beneficiaryCount = Array.isArray(kuData.beneficiaries) ? kuData.beneficiaries.length : 0;
+  const beneficiaryStat = document.getElementById("home-beneficiary-families");
+  if (beneficiaryStat) beneficiaryStat.textContent = formatNumberBN(beneficiaryCount);
   const impactTotal = document.querySelector(".impact-metrics article:first-child strong");
   if (impactTotal) impactTotal.textContent = totalLabel;
   const activityIntro = document.querySelector('[data-text="activityIntro"]');
