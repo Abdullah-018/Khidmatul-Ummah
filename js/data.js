@@ -43,6 +43,7 @@ const KU_DEFAULT_DATA = {
     adminNavProjects: "প্রকল্প",
     adminNavDonations: "দান ও রসিদ",
     adminNavDonors: "ডোনার তথ্য",
+    adminNavBeneficiaries: "উপকারভোগী",
     adminNavAccounts: "দানের একাউন্ট",
     adminNavLibrary: "লাইব্রেরি",
     adminNavShura: "শূরা সদস্য",
@@ -61,6 +62,8 @@ const KU_DEFAULT_DATA = {
     adminDonationsIntro: "ওয়েবসাইটের দান ফর্ম জমা দিলে দাতার তথ্য এখানে সংরক্ষিত হবে এবং ডোনার টেবিলেও স্বয়ংক্রিয়ভাবে যোগ হবে।",
     adminDonorsTitle: "ডোনার তথ্য এন্ট্রি ও তালিকা",
     adminDonorsIntro: "এখানে হাতে ডোনার যোগ করা যাবে। ওয়েবসাইট থেকে দান জমা দেওয়া ডোনাররাও স্বয়ংক্রিয়ভাবে এখানে যুক্ত হবে।",
+    adminBeneficiariesTitle: "উপকারভোগী ডাটাবেজ",
+    adminBeneficiariesIntro: "গ্রামের অসহায় ও দরিদ্র মানুষের তথ্য, অগ্রাধিকার স্কোর এবং প্রকল্পভিত্তিক সহায়তার ইতিহাস শুধু এডমিন প্যানেলে সংরক্ষিত থাকবে।",
     adminAccountsTitle: "দানের একাউন্ট সেটিংস",
     adminLibraryTitle: "লাইব্রেরি / বই ব্যবস্থাপনা",
     adminShuraTitle: "শূরা সদস্য যোগ / ব্যবস্থাপনা",
@@ -154,6 +157,7 @@ const KU_DEFAULT_DATA = {
   ],
   donations: [],
   donors: [],
+  beneficiaries: [],
   reminders: [
     { type: "কুরআন", category: "দান", reference: "সূরা আল-বাকারা ২:২৬১", text: "আল্লাহর পথে ব্যয়ের দৃষ্টান্ত এমন এক শস্যদানা, যা সাতটি শীষ উৎপন্ন করে; প্রতিটি শীষে থাকে শত দানা। আল্লাহ যাকে চান বহুগুণ বাড়িয়ে দেন।" },
     { type: "কুরআন", category: "দান", reference: "সূরা আল-বাকারা ২:২৬৭", text: "তোমরা যা উপার্জন করেছ এবং যা আল্লাহ জমিন থেকে বের করেছেন, তার উত্তম অংশ থেকে ব্যয় করো।" },
@@ -182,6 +186,7 @@ function mergeKUData(defaultData, savedData) {
     shura: Array.isArray(savedData.shura) ? savedData.shura : defaultData.shura,
     donations: Array.isArray(savedData.donations) ? savedData.donations : defaultData.donations,
     donors: Array.isArray(savedData.donors) ? savedData.donors : defaultData.donors,
+    beneficiaries: Array.isArray(savedData.beneficiaries) ? savedData.beneficiaries : defaultData.beneficiaries,
     reminders: Array.isArray(savedData.reminders) ? savedData.reminders : defaultData.reminders
   };
   migrateKUData(merged);
@@ -196,6 +201,9 @@ function migrateKUData(data) {
     "adminQuickNotesText",
     "adminDonationsIntro",
     "adminDonorsIntro",
+    "adminNavBeneficiaries",
+    "adminBeneficiariesTitle",
+    "adminBeneficiariesIntro",
     "adminNavLibrary",
     "adminLibraryTitle",
     "adminBackupIntro"
@@ -203,6 +211,12 @@ function migrateKUData(data) {
     if (!data.texts[key]) data.texts[key] = currentDefaults[key];
   });
   if (!Array.isArray(data.accounts)) data.accounts = [];
+  if (!Array.isArray(data.beneficiaries)) data.beneficiaries = [];
+  data.beneficiaries.forEach(item => {
+    if (!Array.isArray(item.needs)) item.needs = [];
+    if (!Array.isArray(item.history)) item.history = [];
+    if (typeof item.score !== "number") item.score = calculateBeneficiaryScore(item);
+  });
   if (!Array.isArray(data.reminders) || !data.reminders.length) data.reminders = deepClone(KU_DEFAULT_DATA.reminders);
   if (!Array.isArray(data.shura)) data.shura = [];
   const usedShuraOrders = new Set();
@@ -286,6 +300,35 @@ function totalCompletedExpense(data) {
   return (data.projects || [])
     .filter(p => p.type === "completed" && p.status === "published")
     .reduce((sum, p) => sum + Number(p.expense || 0), 0);
+}
+function calculateBeneficiaryScore(item) {
+  const members = Number(item.familyMembers || 0);
+  const earners = Number(item.earningMembers || 0);
+  const income = Number(item.monthlyIncome || 0);
+  const previousAidCount = Number(item.previousAidCount || 0);
+  const needs = Array.isArray(item.needs) ? item.needs : [];
+  let score = 0;
+  if (income <= 0) score += 25;
+  else if (income <= 5000) score += 18;
+  else if (income <= 10000) score += 10;
+  if (members >= 7) score += 14;
+  else if (members >= 5) score += 9;
+  if (earners <= 0) score += 14;
+  else if (earners === 1 && members >= 5) score += 8;
+  if (item.hasDebt === "হ্যাঁ") score += 8;
+  if (item.hasIllness === "হ্যাঁ") score += 14;
+  if (item.hasDisability === "হ্যাঁ") score += 14;
+  if (item.category === "বিধবা পরিবার") score += 12;
+  if (item.category === "এতিম পরিবার") score += 12;
+  if (item.category === "বয়স্ক/অসহায়") score += 10;
+  if (needs.includes("চিকিৎসা")) score += 10;
+  if (needs.includes("খাদ্য")) score += 8;
+  if (needs.includes("যাকাত")) score += 8;
+  if (previousAidCount <= 0) score += 8;
+  else if (previousAidCount >= 3) score -= 8;
+  if (item.verificationStatus === "যাচাইকৃত") score += 6;
+  if (item.verificationStatus === "স্থগিত") score -= 30;
+  return Math.max(0, Math.min(score, 100));
 }
 async function fileToDataURL(file) {
   if (!file) return "";

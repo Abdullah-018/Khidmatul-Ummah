@@ -40,6 +40,7 @@ const TEXT_LABELS = [
   { group: "এডমিন: মেনু", key: "adminNavProjects", label: "প্রকল্প মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavDonations", label: "দান ও রসিদ মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavDonors", label: "ডোনার মেনু" },
+  { group: "এডমিন: মেনু", key: "adminNavBeneficiaries", label: "উপকারভোগী মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavAccounts", label: "একাউন্ট মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavLibrary", label: "লাইব্রেরি মেনু" },
   { group: "এডমিন: মেনু", key: "adminNavShura", label: "শূরা মেনু" },
@@ -58,6 +59,8 @@ const TEXT_LABELS = [
   { group: "এডমিন: সেকশন", key: "adminDonationsIntro", label: "দান/রসিদ প্যারাগ্রাফ", long: true },
   { group: "এডমিন: সেকশন", key: "adminDonorsTitle", label: "ডোনার শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminDonorsIntro", label: "ডোনার প্যারাগ্রাফ", long: true },
+  { group: "এডমিন: সেকশন", key: "adminBeneficiariesTitle", label: "উপকারভোগী শিরোনাম" },
+  { group: "এডমিন: সেকশন", key: "adminBeneficiariesIntro", label: "উপকারভোগী প্যারাগ্রাফ", long: true },
   { group: "এডমিন: সেকশন", key: "adminAccountsTitle", label: "দানের একাউন্ট শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminLibraryTitle", label: "লাইব্রেরি শিরোনাম" },
   { group: "এডমিন: সেকশন", key: "adminShuraTitle", label: "শূরা শিরোনাম" },
@@ -81,6 +84,7 @@ async function initAdmin() {
   bindBookForm();
   bindShuraForm();
   bindDonorForm();
+  bindBeneficiaryTools();
   bindBackupTools();
   refreshShuraRoleOptions();
   renderTextEditor();
@@ -147,6 +151,7 @@ function renderAll() {
   renderProjectsTable();
   renderDonationTable();
   renderDonorTable();
+  renderBeneficiaryTable();
   renderAccountsTable();
   renderBooksTable();
   renderShuraTable();
@@ -175,6 +180,7 @@ function renderDashboard() {
     ["মোট দান", formatBDT(verifiedDonations.reduce((s,d)=>s+Number(d.amount||0),0))],
     ["Pending Donation", formatNumberBN(pending.length)],
     ["মোট ডোনার", formatNumberBN((data.donors || []).length)],
+    ["উপকারভোগী", formatNumberBN((data.beneficiaries || []).length)],
     ["লাইব্রেরির বই", formatNumberBN((data.books || []).length)],
     ["সক্রিয় শূরা সদস্য", formatNumberBN((data.shura || []).filter(m=>m.active).length)]
   ];
@@ -290,6 +296,177 @@ window.editDonor = function(id) {
   setVal("admin-donor-id", d.id); setVal("admin-donor-name", d.name); setVal("admin-donor-mobile", d.mobile); setVal("admin-donor-email", d.email); setVal("admin-donor-address", d.address); setVal("admin-donor-status", d.status || "Active"); setVal("admin-donor-note", d.note); openTab("donors");
 };
 window.deleteDonor = async function(id) { if (confirm("এই ডোনার তথ্য ডিলিট করতে চান?")) { data.donors = data.donors.filter(d => d.id !== id); await saveAndRender(); } };
+
+function bindBeneficiaryTools() {
+  const form = document.getElementById("beneficiary-form");
+  if (!form) return;
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = getVal("beneficiary-id") || makeId();
+    const existing = (data.beneficiaries || []).find(item => item.id === id) || {};
+    const beneficiary = {
+      ...existing,
+      id,
+      name: getVal("beneficiary-name"),
+      guardian: getVal("beneficiary-guardian"),
+      mobile: getVal("beneficiary-mobile"),
+      area: getVal("beneficiary-area"),
+      address: getVal("beneficiary-address"),
+      category: getVal("beneficiary-category"),
+      verificationStatus: getVal("beneficiary-verification"),
+      familyMembers: Number(getVal("beneficiary-family") || 0),
+      earningMembers: Number(getVal("beneficiary-earners") || 0),
+      monthlyIncome: Number(getVal("beneficiary-income") || 0),
+      previousAidCount: Number(getVal("beneficiary-previous-aid") || 0),
+      hasDebt: getVal("beneficiary-debt"),
+      hasIllness: getVal("beneficiary-illness"),
+      hasDisability: getVal("beneficiary-disability"),
+      verifier: getVal("beneficiary-verifier"),
+      needs: getCheckedValues("beneficiary-need"),
+      note: getVal("beneficiary-note"),
+      history: Array.isArray(existing.history) ? existing.history : [],
+      updatedAt: new Date().toISOString()
+    };
+    beneficiary.score = calculateBeneficiaryScore(beneficiary);
+    if (!Array.isArray(data.beneficiaries)) data.beneficiaries = [];
+    upsert(data.beneficiaries, beneficiary);
+    clearBeneficiaryForm();
+    await saveAndRender();
+    alert("উপকারভোগী তথ্য সেভ হয়েছে।");
+  });
+  document.getElementById("beneficiary-clear")?.addEventListener("click", clearBeneficiaryForm);
+  document.getElementById("beneficiary-new")?.addEventListener("click", clearBeneficiaryForm);
+  ["beneficiary-search", "beneficiary-need-filter", "beneficiary-status-filter"].forEach(id => {
+    document.getElementById(id)?.addEventListener("input", renderBeneficiaryTable);
+    document.getElementById(id)?.addEventListener("change", renderBeneficiaryTable);
+  });
+  document.getElementById("beneficiary-select-all")?.addEventListener("change", e => {
+    document.querySelectorAll(".beneficiary-select").forEach(box => box.checked = e.target.checked);
+  });
+  document.getElementById("beneficiary-add-history")?.addEventListener("click", addHistoryToSelectedBeneficiaries);
+}
+
+function clearBeneficiaryForm() {
+  document.getElementById("beneficiary-form")?.reset();
+  setVal("beneficiary-id", "");
+  setVal("beneficiary-category", "সাধারণ অসহায়");
+  setVal("beneficiary-verification", "নতুন");
+  setVal("beneficiary-family", 0);
+  setVal("beneficiary-earners", 0);
+  setVal("beneficiary-income", 0);
+  setVal("beneficiary-previous-aid", 0);
+  setVal("beneficiary-debt", "না");
+  setVal("beneficiary-illness", "না");
+  setVal("beneficiary-disability", "না");
+  document.querySelectorAll('input[name="beneficiary-need"]').forEach(input => input.checked = false);
+}
+
+function filteredBeneficiaries() {
+  const q = (getVal("beneficiary-search") || "").toLowerCase();
+  const need = getVal("beneficiary-need-filter");
+  const status = getVal("beneficiary-status-filter");
+  return [...(data.beneficiaries || [])].filter(item => {
+    const haystack = `${item.name || ""} ${item.guardian || ""} ${item.mobile || ""} ${item.area || ""} ${item.address || ""} ${item.category || ""} ${item.note || ""}`.toLowerCase();
+    const matchesSearch = !q || haystack.includes(q);
+    const matchesNeed = !need || (item.needs || []).includes(need);
+    const matchesStatus = !status || item.verificationStatus === status;
+    return matchesSearch && matchesNeed && matchesStatus;
+  }).map(item => ({ ...item, score: calculateBeneficiaryScore(item) }))
+    .sort((a, b) => Number(b.score || 0) - Number(a.score || 0) || String(a.name || "").localeCompare(String(b.name || "")));
+}
+
+function renderBeneficiaryTable() {
+  const table = document.getElementById("beneficiary-table");
+  if (!table) return;
+  renderBeneficiaryProjectOptions();
+  const rows = filteredBeneficiaries().map(item => {
+    const history = Array.isArray(item.history) ? item.history : [];
+    const lastAid = history[history.length - 1];
+    return `<tr>
+      <td><input class="beneficiary-select" type="checkbox" value="${escapeHTML(item.id)}"></td>
+      <td><span class="score-pill ${scoreClass(item.score)}">${formatNumberBN(item.score || 0)}</span></td>
+      <td><b>${escapeHTML(item.name || "-")}</b><br><small>${escapeHTML(item.mobile || "-")} • ${escapeHTML(item.area || "-")}</small></td>
+      <td>${escapeHTML(item.category || "-")}</td>
+      <td>${(item.needs || []).map(need => `<span class="mini-tag">${escapeHTML(need)}</span>`).join(" ") || "-"}</td>
+      <td>${formatNumberBN(item.familyMembers || 0)} জন<br><small>আয়: ${formatBDT(item.monthlyIncome || 0)}</small></td>
+      <td>${escapeHTML(item.verificationStatus || "-")}<br><small>${escapeHTML(item.verifier || "")}</small></td>
+      <td>${lastAid ? `${escapeHTML(lastAid.title || "-")}<br><small>${formatDateBN(lastAid.date)}</small>` : "-"}</td>
+      <td><div class="action-row"><button class="btn small soft" onclick="editBeneficiary('${item.id}')">এডিট</button><button class="btn small danger" onclick="deleteBeneficiary('${item.id}')">ডিলিট</button></div></td>
+    </tr>`;
+  }).join("");
+  table.innerHTML = rows || `<tr><td colspan="9">এখনো কোনো উপকারভোগী তথ্য নেই।</td></tr>`;
+}
+
+function renderBeneficiaryProjectOptions() {
+  const select = document.getElementById("beneficiary-project-select");
+  if (!select) return;
+  const current = select.value;
+  const projects = (data.projects || []).filter(project => project.status === "published" || project.type === "upcoming");
+  select.innerHTML = `<option value="">প্রকল্প নির্বাচন করুন</option>` + projects.map(project => `<option value="${escapeHTML(project.id)}">${escapeHTML(project.title)}</option>`).join("");
+  select.value = current;
+}
+
+async function addHistoryToSelectedBeneficiaries() {
+  const selectedIds = [...document.querySelectorAll(".beneficiary-select:checked")].map(input => input.value);
+  if (!selectedIds.length) return alert("কমপক্ষে একজন উপকারভোগী নির্বাচন করুন।");
+  const projectId = getVal("beneficiary-project-select");
+  const project = (data.projects || []).find(item => item.id === projectId);
+  const title = getVal("beneficiary-aid-title") || project?.title || "সহায়তা";
+  const amount = Number(getVal("beneficiary-aid-amount") || 0);
+  data.beneficiaries.forEach(item => {
+    if (!selectedIds.includes(item.id)) return;
+    if (!Array.isArray(item.history)) item.history = [];
+    item.history.push({
+      id: makeId(),
+      projectId,
+      title,
+      amount,
+      date: new Date().toISOString()
+    });
+    item.previousAidCount = Number(item.previousAidCount || 0) + 1;
+    item.score = calculateBeneficiaryScore(item);
+  });
+  setVal("beneficiary-aid-title", "");
+  setVal("beneficiary-aid-amount", "");
+  await saveAndRender();
+  alert("নির্বাচিত উপকারভোগীদের সহায়তার ইতিহাস আপডেট হয়েছে।");
+}
+
+window.editBeneficiary = function(id) {
+  const item = (data.beneficiaries || []).find(entry => entry.id === id);
+  if (!item) return;
+  setVal("beneficiary-id", item.id);
+  setVal("beneficiary-name", item.name);
+  setVal("beneficiary-guardian", item.guardian);
+  setVal("beneficiary-mobile", item.mobile);
+  setVal("beneficiary-area", item.area);
+  setVal("beneficiary-address", item.address);
+  setVal("beneficiary-category", item.category || "সাধারণ অসহায়");
+  setVal("beneficiary-verification", item.verificationStatus || "নতুন");
+  setVal("beneficiary-family", item.familyMembers || 0);
+  setVal("beneficiary-earners", item.earningMembers || 0);
+  setVal("beneficiary-income", item.monthlyIncome || 0);
+  setVal("beneficiary-previous-aid", item.previousAidCount || 0);
+  setVal("beneficiary-debt", item.hasDebt || "না");
+  setVal("beneficiary-illness", item.hasIllness || "না");
+  setVal("beneficiary-disability", item.hasDisability || "না");
+  setVal("beneficiary-verifier", item.verifier);
+  setVal("beneficiary-note", item.note);
+  setCheckedValues("beneficiary-need", item.needs || []);
+  openTab("beneficiaries");
+};
+
+window.deleteBeneficiary = async function(id) {
+  if (!confirm("এই উপকারভোগী তথ্য ডিলিট করতে চান?")) return;
+  data.beneficiaries = (data.beneficiaries || []).filter(item => item.id !== id);
+  await saveAndRender();
+};
+
+function scoreClass(score) {
+  if (Number(score || 0) >= 70) return "high";
+  if (Number(score || 0) >= 40) return "mid";
+  return "low";
+}
 
 function bindAccountForm() {
   document.getElementById("account-form").addEventListener("submit", async e => {
@@ -445,6 +622,13 @@ async function getAdminAsset(bucket, file, prefix) {
 }
 function getVal(id) { return document.getElementById(id)?.value.trim() || ""; }
 function setVal(id, value) { const el = document.getElementById(id); if (el) el.value = value ?? ""; }
+function getCheckedValues(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(input => input.value);
+}
+function setCheckedValues(name, values) {
+  const selected = new Set(values || []);
+  document.querySelectorAll(`input[name="${name}"]`).forEach(input => input.checked = selected.has(input.value));
+}
 function selected(a, b) { return a === b ? "selected" : ""; }
 function openTab(tab) { openTabDirect(tab); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
